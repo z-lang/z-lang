@@ -1,0 +1,16 @@
+language: python
+python:
+  - "3.2"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+
+# debian packages
+before_install:
+ - sudo apt-get install haskell-platform
+
+# command to install dependencies
+install: "pip install ply Jinja2"
+
+# command to run tests
+script: make test
