@@ -1,0 +1,14 @@
+////////////////
+// zLang Demo //
+////////////////
+
+// identitätsfunktions
+def identity(x) = x
+
+// boolean
+def true(a, b) = a
+def false(a, b) = b
+def ifelse(c, a, b) = c(a, b)
+
+// composition
+def composition(f, g) = lambda(x) f( g(x) )

@@ -1,0 +1,7 @@
+__pycache__/
+gen
+parser.out
+parsetab.py
+*.pyc
+*.swp
+*.hs

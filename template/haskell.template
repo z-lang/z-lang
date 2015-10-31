@@ -1,0 +1,39 @@
+## This macro executes 'func' on every element in list and prints 'delimiter' between
+#  macro foreach(list, func, delimiter) 
+#     for element in list
+         {{- func(element) -}}
+#        if not loop.last
+            {{- delimiter -}}
+#        endif
+#     endfor
+#  endmacro
+
+
+
+##- Recursive macro for each node value
+#  macro each_node(node)
+#     if node.type() == 'ID' and node|length == 0
+         ## A variable
+         {{- node.value() -}}
+#     elif node.type() == 'ID'
+         ## A function call
+         {{- "(" ~ node + " " + foreach(node, each_node, " ") + ")" -}} 
+#     elif node.type() == 'LAMBDA'
+         ## A lambda function
+         {{- "\\\\" + node[0]|join(' ') + " -> " + each_node(node[1]) -}}
+#     else
+         ## A tuple value
+         {{- "(" + foreach(node, each_node, ", ") + ")" -}}      
+#     endif
+# endmacro
+
+
+
+## Define a haskell function for every definition in ast
+#  for definition in definitions
+#     if definition[0]|length > 0
+      {{- definition[0] ~ " " + definition[0]|join(' ') + " = " + each_node(definition[1]) + "\n\n" -}}
+#     else
+      {{- definition[0] ~ " = " + each_node(definition[1]) + "\n\n" -}}
+#     endif
+#  endfor
