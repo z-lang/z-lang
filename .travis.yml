@@ -5,11 +5,15 @@ python:
   - "3.5"
 
 # debian packages
-before_install:
- - sudo apt-get install haskell-platform
+addons:
+   apt:
+      packages:
+      - haskell-platform
 
 # command to install dependencies
 install: "pip install ply Jinja2"
 
 # command to run tests
 script: make test
+
+sudo: false
