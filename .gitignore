@@ -2,6 +2,7 @@ __pycache__/
 gen
 parser.out
 parsetab.py
+*Template.py
 *.pyc
 *.swp
 *.hs

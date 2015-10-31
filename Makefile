@@ -1,7 +1,7 @@
 
 PYTHON = python3
-ZLANG = PYTHONPATH="gen"; ${PYTHON} src/main.py
-TEMPLATES = gen/haskellTemplate.py
+ZLANG = ${PYTHON} src/main.py
+TEMPLATES = src/haskellTemplate.py
 
 .PHONY: all verbose test template clean
 
@@ -12,19 +12,14 @@ verbose: template
 	@${ZLANG} -tsc demo.zl
 
 test: template
-	@export PYTHONPATH="src:gen"; \
-	${PYTHON} -m unittest discover -s test -v -p *Test.py
+	@${PYTHON} -m unittest discover -s src -v -p *Test.py
 
-template: gen ${TEMPLATES}
+template: ${TEMPLATES}
 
-gen/%Template.py: template/%.template
+src/%Template.py: template/%.template
 	@echo -n 'template = """' >> "$@"
 	@cat "$^" >> "$@"
 	@echo '"""' >> "$@"
 
-gen:
-	mkdir gen
-
 clean:
-	@rm -rf gen
 

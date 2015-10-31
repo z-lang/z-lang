@@ -1,5 +1,5 @@
 from unittest import TestCase
-from Parser import Parser
+from src.Parser import Parser
 
 def flatten(node):
     string = str(node)
