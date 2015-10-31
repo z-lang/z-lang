@@ -12,7 +12,7 @@ verbose: template
 	@${ZLANG} -tsc demo.zl
 
 test: template
-	@PYTHONPATH="src:gen"; \
+	@export PYTHONPATH="src:gen"; \
 	${PYTHON} -m unittest discover -s test -v -p *Test.py
 
 template: gen ${TEMPLATES}
