@@ -39,3 +39,9 @@
       {{- definition[0] ~ " = " + each_node(definition[1]) + "\n\n" -}}
 #     endif
 #  endfor
+
+## Library functions
+# if library
+true = True
+false = False
+# endif

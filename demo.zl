@@ -2,10 +2,14 @@
 // zLang Demo //
 ////////////////
 
-def a = 3
+def pi = 3
+def bool = true
 
 // identitätsfunktions
 def identity(x) = x
 
 // composition
 def composition(f, g) = lambda(x) f( g(x) )
+
+// endless recursion
+def rec(x) = rec(x)

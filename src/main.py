@@ -28,7 +28,7 @@ def main():
         print(source)
 
     # compile
-    (code, errors) = Compiler().compile(source)
+    (code, errors) = Compiler().compile(source, library=True)
 
     # check for errors
     if len(errors) > 0:

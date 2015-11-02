@@ -3,7 +3,7 @@ from CodeGenerator import CodeGenerator
 from haskellTemplate import template
 
 class Compiler:
-    def compile(self, source):
+    def compile(self, source, library=False):
         # parse input
         (definitions, errors) = Parser().parse(source)
 
@@ -12,7 +12,7 @@ class Compiler:
             return ("", errors)
 
         # code generation
-        code = CodeGenerator().generate(definitions, template)
+        code = CodeGenerator().generate(definitions, template, library)
 
         return (code, errors)
        

@@ -1,7 +1,7 @@
 from jinja2 import Environment, Template
 
 class CodeGenerator:
-    def generate(self, definitions, templateString):
+    def generate(self, definitions, templateString, library):
         # create a template environement and define settings
         env = Environment(line_statement_prefix='#', line_comment_prefix='##')
 
@@ -9,5 +9,8 @@ class CodeGenerator:
         template = env.from_string(templateString)
 
         # give ast as input an render template
-        return template.render({ "definitions" : definitions })
+        return template.render({ 
+            "definitions" : definitions,
+            "library" : library
+        })
 
