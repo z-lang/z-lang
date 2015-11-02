@@ -13,3 +13,8 @@ def composition(f, g) = lambda(x) f( g(x) )
 
 // endless recursion
 def rec(x) = rec(x)
+
+// test
+def f(x) = lambda(y) y
+def a = f(1, 2)
+def b = f(1)(2)

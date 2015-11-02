@@ -41,7 +41,7 @@ class Grammer:
 
     def p_value(self, p):
         '''value : LAMBDA parameters value
-               | arguments
+               | tuple
                | ID arguments
                | ID
                | INT
@@ -60,7 +60,15 @@ class Grammer:
             p[0] = self.factory.createVariable(p[1])
 
     def p_arguments(self, p):
-        '''arguments : LP argument RP'''
+        '''arguments : arguments tuple
+                     | tuple'''
+        if len(p) > 2:
+            p[0] = p[1] + p[2]
+        else:
+            p[0] = p[1]
+
+    def p_tuple(self, p):
+        '''tuple : LP argument RP'''
         p[0] = p[2]
 
     def p_argument(self, p):
