@@ -62,4 +62,59 @@ class LexerTest(TestCase):
             [ 'DEF', 'ID', 'LP', 'ID', 'RP', 'EQ', 'LAMBDA', 'LP', 'ID', 'RP', 'ID'])
 
 
+    def testScanPositiveInteger(self):
+        lexer = Lexer()
+        lexer.input("def number = 42")
+        (tokens, errors) = lexer.allTokens()
+
+        # assert that no error occured
+        self.assertEqual(errors, [])
+
+        # assert correct token scanning
+        self.assertEqual(
+            types(tokens),
+            [ 'DEF', 'ID', 'EQ', 'INT'])
+
+
+    def testScanNegativeInteger(self):
+        lexer = Lexer()
+        lexer.input("def number = -102")
+        (tokens, errors) = lexer.allTokens()
+
+        # assert that no error occured
+        self.assertEqual(errors, [])
+
+        # assert correct token scanning
+        self.assertEqual(
+            types(tokens),
+            [ 'DEF', 'ID', 'EQ', 'INT'])
+
+
+    def testScanBooleanTrue(self):
+        lexer = Lexer()
+        lexer.input("def boolean = true")
+        (tokens, errors) = lexer.allTokens()
+
+        # assert that no error occured
+        self.assertEqual(errors, [])
+
+        # assert correct token scanning
+        self.assertEqual(
+            types(tokens),
+            [ 'DEF', 'ID', 'EQ', 'BOOL'])
+
+
+    def testScanBooleanFalse(self):
+        lexer = Lexer()
+        lexer.input("def boolean = false")
+        (tokens, errors) = lexer.allTokens()
+
+        # assert that no error occured
+        self.assertEqual(errors, [])
+
+        # assert correct token scanning
+        self.assertEqual(
+            types(tokens),
+            [ 'DEF', 'ID', 'EQ', 'BOOL'])
+
 

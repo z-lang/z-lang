@@ -1,6 +1,12 @@
+class Syntax:
+    Variable    = 0
+    Application = 1
+    Lambda      = 2
+    Let         = 3
 
 class Node:
-    def __init__(self, token, children):
+    def __init__(self, syntax, token, children):
+        self.syntax = syntax
         self.token = token
         self.children = children
 
@@ -23,7 +29,36 @@ class Node:
             return self.token.value
         return None
 
-    def type(self):
+    def tokenId(self):
         if self.token:
             return self.token.type
         return None
+
+    def isVariable(self):
+        return self.syntax == Syntax.Variable
+
+    def isApplication(self):
+        return self.syntax == Syntax.Application
+
+    def isLambda(self):
+        return self.syntax == Syntax.Lambda
+   
+    def isLet(self):
+        return self.syntax == Syntax.Let
+
+
+
+def variableNode(token, children):
+    return Node(Syntax.Variable, token, children)
+
+
+def applicationNode(token, children):
+    return Node(Syntax.Application, token, children)
+
+
+def lambdaNode(token, children):
+    return Node(Syntax.Lambda, token, children)
+
+def letNode(token, children):
+    return Node(Syntax.Let, token, children)
+

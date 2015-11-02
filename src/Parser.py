@@ -19,20 +19,12 @@ class Grammer:
             p[0] = [ p[1] ]
             
     def p_definition(self, p):
-        'definition : DEF assignment'
-        p[0] = self.factory.createDefinition(p[1], p[2])
-
-    def p_assignment(self, p):
-        '''assignment : declaration EQ value'''
-        p[0] = [ p[1], p[3] ]
-
-    def p_declaration(self, p):
-        '''declaration : ID parameters
-               | ID'''
-        if len(p) > 2:
-            p[0] = self.factory.createDeclaration(p[1], p[2])
+        '''definition : DEF ID parameters EQ value
+                    | DEF ID EQ value'''
+        if len(p) == 6:
+            p[0] = self.factory.createFunctionDefinition(p[1], p[2], p[3], p[5])
         else:
-            p[0] = self.factory.createDeclaration(p[1], [])
+            p[0] = self.factory.createVariableDefinition(p[1], p[2], p[4])
 
     def p_parameters(self, p):
         '''parameters : LP parameter RP'''
@@ -51,14 +43,20 @@ class Grammer:
         '''value : LAMBDA parameters value
                | arguments
                | ID arguments
-               | ID'''
+               | ID
+               | INT
+               | BOOL'''
         if len(p) == 4:
             p[0] = self.factory.createLambda(p[1], p[2], p[3])
         elif len(p) == 3:
             p[0] = self.factory.createCall(p[1], p[2])
         elif type(p[1]) is list:
             p[0] = self.factory.createTuple(p[1])
-        else:
+        elif p[1].type == 'INT':
+            p[0] = self.factory.createInteger(p[1])
+        elif p[1].type == 'BOOL':
+            p[0] = self.factory.createBoolean(p[1])
+        elif p[1].type == 'ID':
             p[0] = self.factory.createVariable(p[1])
 
     def p_arguments(self, p):

@@ -9,7 +9,7 @@ class Compiler:
 
         # check for errors
         if len(errors) > 0:
-            return errors
+            return ("", errors)
 
         # code generation
         code = CodeGenerator().generate(definitions, template)

@@ -31,7 +31,7 @@ class ParserTest(TestCase):
         # assert correct parsing
         self.assertEqual(
             flatten(definitions[0]),
-            "def(f(x) x)")
+            "def(f lambda((x) x))")
 
 
     def testParseTuple(self):
@@ -55,6 +55,55 @@ class ParserTest(TestCase):
         # assert correct parsing
         self.assertEqual(
             flatten(definitions[0]),
-            "def(f(x) lambda((y) x))")
+            "def(f lambda((x) lambda((y) x)))")
+
+
+    def testParsePositiveInteger(self):
+        (definitions, errors) = Parser().parse("def number = 42")
+
+        # assert that no error occured
+        self.assertEqual(errors, [])
+
+        # assert correct parsing
+        self.assertEqual(
+            flatten(definitions[0]),
+            "def(number 42)")
+
+
+    def testParseNegativeInteger(self):
+        (definitions, errors) = Parser().parse("def number = -103")
+
+        # assert that no error occured
+        self.assertEqual(errors, [])
+
+        # assert correct parsing
+        self.assertEqual(
+            flatten(definitions[0]),
+            "def(number -103)")
+
+
+    def testParseTrue(self):
+        (definitions, errors) = Parser().parse("def boolean = true")
+
+        # assert that no error occured
+        self.assertEqual(errors, [])
+
+        # assert correct parsing
+        self.assertEqual(
+            flatten(definitions[0]),
+            "def(boolean true)")
+
+
+    def testParseFalse(self):
+        (definitions, errors) = Parser().parse("def boolean = false")
+
+        # assert that no error occured
+        self.assertEqual(errors, [])
+
+        # assert correct parsing
+        self.assertEqual(
+            flatten(definitions[0]),
+            "def(boolean false)")
+
 
 

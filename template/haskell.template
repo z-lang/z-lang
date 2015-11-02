@@ -12,18 +12,20 @@
 
 ##- Recursive macro for each node value
 #  macro each_node(node)
-#     if node.type() == 'ID' and node|length == 0
-         ## A variable
-         {{- node.value() -}}
-#     elif node.type() == 'ID'
+#     if node.isVariable()
+#        if node|length == 0
+            ## A variable
+            {{- node.value() -}}
+#        else
+            ## A tuple value
+            {{- "(" + foreach(node, each_node, ", ") + ")" -}}      
+#        endif
+#     elif node.isApplication()
          ## A function call
          {{- "(" ~ node + " " + foreach(node, each_node, " ") + ")" -}} 
-#     elif node.type() == 'LAMBDA'
+#     elif node.isLambda()
          ## A lambda function
          {{- "\\\\" + node[0]|join(' ') + " -> " + each_node(node[1]) -}}
-#     else
-         ## A tuple value
-         {{- "(" + foreach(node, each_node, ", ") + ")" -}}      
 #     endif
 # endmacro
 
@@ -31,8 +33,8 @@
 
 ## Define a haskell function for every definition in ast
 #  for definition in definitions
-#     if definition[0]|length > 0
-      {{- definition[0] ~ " " + definition[0]|join(' ') + " = " + each_node(definition[1]) + "\n\n" -}}
+#     if definition[1].isLambda()
+      {{- definition[0] ~ " " + definition[1][0]|join(' ') + " = " + each_node(definition[1][1]) + "\n\n" -}}
 #     else
       {{- definition[0] ~ " = " + each_node(definition[1]) + "\n\n" -}}
 #     endif

@@ -3,11 +3,12 @@ import ply.lex as lex
 # The Scanner class defines how to parse the tokens
 class Scanner:
     # Language tokens
-    tokens = [ 'DEF', 'LAMBDA', 'NEWLINE','EQ', 'COMMA', 'LP', 'RP', 'ID', 'COMMENT' ]
+    tokens = [ 'DEF', 'LAMBDA', 'NEWLINE','EQ', 'COMMA', 'LP', 'RP', 'ID', 'INT', 'BOOL', 'COMMENT' ]
 
     # Simple rules
     t_ignore = ' \t'
-    t_ID     = '[A-Za-z0-9]+'
+    t_ID     = '[A-Za-z][A-Za-z0-9]*'
+    t_INT     = '-?[0-9]+'
     t_EQ     = '='
     t_COMMA  = ','
     t_LP     = '\('
@@ -26,6 +27,11 @@ class Scanner:
     # Ignore comments
     def t_COMMENT(self, t):
         '//.+'
+
+    # Keywords for boolean
+    def t_BOOL(self, t):
+        '(true|false)'
+        return t
 
     # Count newlines in code
     def t_NEWLINE(self, t):
