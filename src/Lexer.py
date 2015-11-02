@@ -2,16 +2,37 @@ import ply.lex as lex
 
 # The Scanner class defines how to parse the tokens
 class Scanner:
+    # Language literals
+    literals = [ '(', ')', '[', ']', ',', '=', '<', '>', '+', '-', '*', '/' ]
+
     # Language tokens
-    tokens = [ 'DEF', 'LAMBDA', 'NEWLINE','EQ', 'COMMA', 'LP', 'RP', 'ID', 'COMMENT' ]
+    tokens = [ 
+        'DEF', 
+        'LAMBDA', 
+        'AND', 
+        'OR', 
+        'NOT', 
+        'NEWLINE',
+        'ID', 
+        'INT', 
+        'BOOL', 
+        'STRING', 
+        'EQ',
+        'NE',
+        'LE',
+        'GE',
+        'COMMENT' 
+    ]
 
     # Simple rules
     t_ignore = ' \t'
-    t_ID     = '[A-Za-z0-9]+'
-    t_EQ     = '='
-    t_COMMA  = ','
-    t_LP     = '\('
-    t_RP     = '\)'
+    t_ID     = '[A-Za-z][A-Za-z0-9]*'
+    t_INT    = '-?[0-9]+'
+    t_STRING = '"[^"]*"'    # string
+    t_EQ     = '=='
+    t_NE     = '!='
+    t_LE     = '<='
+    t_GE     = '>='
 
     # Keyword for definitons
     def t_DEF(self, t):
@@ -23,9 +44,29 @@ class Scanner:
         'lambda'
         return t
 
+    # Keyword for logical and
+    def t_AND(self, t):
+        'and'
+        return t
+
+    # Keyword for logical or
+    def t_OR(self, t):
+        'or'
+        return t
+
+    # Keyword for logical xor
+    def t_NOT(self, t):
+        'not'
+        return t
+
     # Ignore comments
     def t_COMMENT(self, t):
         '//.+'
+
+    # Keywords for boolean
+    def t_BOOL(self, t):
+        '(true|false)'
+        return t
 
     # Count newlines in code
     def t_NEWLINE(self, t):

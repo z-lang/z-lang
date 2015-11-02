@@ -6,6 +6,7 @@ class Grammer:
     def __init__(self, factory, lexer):
         self.factory = factory
         self.lexer = lexer
+        self.literals = lexer.literals
         self.tokens = lexer.tokens
         self.errors = lexer.errors
 
@@ -19,27 +20,19 @@ class Grammer:
             p[0] = [ p[1] ]
             
     def p_definition(self, p):
-        'definition : DEF assignment'
-        p[0] = self.factory.createDefinition(p[1], p[2])
-
-    def p_assignment(self, p):
-        '''assignment : declaration EQ value'''
-        p[0] = [ p[1], p[3] ]
-
-    def p_declaration(self, p):
-        '''declaration : ID parameters
-               | ID'''
-        if len(p) > 2:
-            p[0] = self.factory.createDeclaration(p[1], p[2])
+        '''definition : DEF ID parameters '=' lambda
+                      | DEF ID '=' lambda'''
+        if len(p) == 6:
+            p[0] = self.factory.createFunctionDefinition(p[1], p[2], p[3], p[5])
         else:
-            p[0] = self.factory.createDeclaration(p[1], [])
+            p[0] = self.factory.createVariableDefinition(p[1], p[2], p[4])
 
     def p_parameters(self, p):
-        '''parameters : LP parameter RP'''
+        '''parameters : '(' parameter ')' '''
         p[0] = p[2]
 
     def p_parameter(self, p):
-        '''parameter : parameter COMMA ID
+        '''parameter : parameter ',' ID
                  | ID'''
         if len(p) > 3:
             p[0] = p[1]
@@ -47,27 +40,132 @@ class Grammer:
         else:
             p[0] = [ p[1] ]
 
-    def p_value(self, p):
-        '''value : LAMBDA parameters value
-               | arguments
-               | ID arguments
-               | ID'''
+    def p_lambda(self, p):
+        '''lambda : LAMBDA parameters lambda
+                  | logical_or'''
         if len(p) == 4:
             p[0] = self.factory.createLambda(p[1], p[2], p[3])
-        elif len(p) == 3:
-            p[0] = self.factory.createCall(p[1], p[2])
-        elif type(p[1]) is list:
-            p[0] = self.factory.createTuple(p[1])
         else:
-            p[0] = self.factory.createVariable(p[1])
+            p[0] = p[1]
+
+    def p_logical_or(self, p):
+        '''logical_or : logical_or OR logical_and
+                      | logical_and'''
+        if len(p) == 4:
+            p[0] = self.factory.createCall(p[2], self.factory.createTuple([ p[1], p[3] ]))
+        else:
+            p[0] = p[1]
+
+    def p_logical_and(self, p):
+        '''logical_and : logical_and AND logical_not
+                       | logical_not'''
+        if len(p) == 4:
+            p[0] = self.factory.createCall(p[2], self.factory.createTuple([ p[1], p[3] ]))
+        else:
+            p[0] = p[1]
+
+    def p_logical_not(self, p):
+        '''logical_not : NOT logical_not
+                       | equality'''
+        if len(p) == 3:
+            p[0] = self.factory.createCall(p[1], self.factory.createTuple([ p[2] ]))
+        else:
+            p[0] = p[1]
+
+    def p_equality(self, p):
+        '''equality : equality EQ cmp
+                    | equality NE cmp
+                    | cmp'''
+        if len(p) > 2:
+            p[0] = self.factory.createCall(p[2], self.factory.createTuple([ p[1], p[3] ]))
+        else:
+            p[0] = p[1]
+
+    def p_cmp(self, p):
+        '''cmp  : expr LE  expr
+                | expr GE  expr
+                | expr '<' expr
+                | expr '>' expr
+                | expr'''
+        if len(p) > 2:
+            p[0] = self.factory.createCall(p[2], self.factory.createTuple([ p[1], p[3] ]))
+        else:
+            p[0] = p[1]
+
+    def p_expr(self, p):
+        '''expr : expr '+' term
+                | expr '-' term
+                | term'''
+        if len(p) > 2:
+            p[0] = self.factory.createCall(p[2], self.factory.createTuple([ p[1], p[3] ]))
+        else:
+            p[0] = p[1]
+
+    def p_term(self, p):
+        '''term : term '*' factor
+                | term '/' factor
+                | factor'''
+        if len(p) > 2:
+            p[0] = self.factory.createCall(p[2], self.factory.createTuple([ p[1], p[3] ]))
+        else:
+            p[0] = p[1]
+
+    def p_factor(self, p):
+        '''factor : tuple
+                 | list
+                 | string
+                 | call
+                 | variable
+                 | integer
+                 | boolean'''
+        p[0] = p[1]
+
+    def p_call(self, p):
+        '''call : ID arguments'''
+        p[0] = self.factory.createVariable(p[1])
+        for args in p[2]:
+            p[0] = self.factory.createApplication(p[0], args)
 
     def p_arguments(self, p):
-        '''arguments : LP argument RP'''
-        p[0] = p[2]
+        '''arguments : arguments tuple
+                     | tuple'''
+        if len(p) > 2:
+            p[0] = p[1]
+            p[0].append(p[2])
+        else:
+            p[0] = [ p[1] ]
+
+    def p_tuple(self, p):
+        '''tuple : '(' argument ')' '''
+        p[0] = self.factory.createTuple(p[2])
+
+    def p_list(self, p):
+        '''list : '[' argument ']'
+                | '[' ']' '''
+        if len(p) == 4:
+            p[0] = self.factory.createList(p[2])
+        else:
+            p[0] = self.factory.createList([])
+
+    def p_string(self, p):
+        '''string : STRING'''
+        p[0] = self.factory.createString(p[1])
+
+    def p_variable(self, p):
+        '''variable : ID'''
+        p[0] = self.factory.createVariable(p[1])
+
+    def p_integer(self, p):
+        '''integer : INT'''
+        p[0] = self.factory.createInteger(p[1])
+
+    def p_boolean(self, p):
+        '''boolean : BOOL'''
+        p[0] = self.factory.createBoolean(p[1])
 
     def p_argument(self, p):
-        '''argument : argument COMMA value
-                    | value'''
+        '''argument : argument ',' lambda
+                    | lambda'''
         if len(p) > 3:
             p[0] = p[1]
             p[0].append(p[3])

@@ -1,0 +1,6 @@
+#!/bin/bash
+cd src; python3 main.py \
+                  --native ../native/haskell.hs \
+                  ../module/list.zl \
+                  ../module/logic.zl \
+                  ../module/math.zl 

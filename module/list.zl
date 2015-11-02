@@ -1,0 +1,37 @@
+// standard functions
+def identity(x) = x
+def composition(f, g) = lambda(x) f( g(x) )
+
+// list
+def first(x) = get(x, 0)
+def second(x) = get(x, 1)
+
+def caseCond(c, v) = c
+def caseVal(c, v) = v
+
+def cases(c, d) = case( 
+                        len(c) == 0,
+                        d,
+                        case( caseCond(first(c)), caseVal(first(c)), cases(tail(c), d) )
+                  )
+
+def append(l, x) = join(l, [x])
+def prepend(x, l) = join([x], l)
+
+
+def map(x, f) = case(
+                     len(x) > 0, 
+                     prepend( f(first(x)), map(tail(x),f) ),
+                     []
+               )
+
+def filter(x, f) = case(
+                     len(x) == 0,  
+                     [],
+                     case( f( first(x) ), prepend( first(x), filter(tail(x), f)), filter(tail(x), f)))
+
+def reduce(x, d, f) = case(
+                        len(x) == 0,
+                        d,
+                        f( first(x), reduce(tail(x), d, f) ) 
+                     )

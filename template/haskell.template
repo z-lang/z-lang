@@ -8,32 +8,55 @@
 #     endfor
 #  endmacro
 
-
-
-##- Recursive macro for each node value
-#  macro each_node(node)
-#     if node.type() == 'ID' and node|length == 0
-         ## A variable
-         {{- node.value() -}}
-#     elif node.type() == 'ID'
-         ## A function call
-         {{- "(" ~ node + " " + foreach(node, each_node, " ") + ")" -}} 
-#     elif node.type() == 'LAMBDA'
-         ## A lambda function
-         {{- "\\\\" + node[0]|join(' ') + " -> " + each_node(node[1]) -}}
+##- Type macro
+# macro typestr(type)
+#     set type = type.prune()
+#     if type.isVariable()
+         {{- unique(type.getSeq()) -}}
+#     elif type.isInteger()
+         {{- "Int" -}}
+#     elif type.isBoolean()
+         {{- "Bool" -}}
+#     elif type.isTuple()
+         {{- "(" + foreach(type.getTypes(), typestr, ", ") + ")" -}}
+#     elif type.isList()
+         {{- "[" + foreach(type.getTypes(), typestr, "") + "]" -}}
+#     elif type.isFunction()
+         {{- foreach(type.getTypes(), typestr, " -> ") -}}
 #     else
-         ## A tuple value
-         {{- "(" + foreach(node, each_node, ", ") + ")" -}}      
+         {{- "?" -}}
 #     endif
 # endmacro
 
-
-
-## Define a haskell function for every definition in ast
-#  for definition in definitions
-#     if definition[0]|length > 0
-      {{- definition[0] ~ " " + definition[0]|join(' ') + " = " + each_node(definition[1]) + "\n\n" -}}
-#     else
-      {{- definition[0] ~ " = " + each_node(definition[1]) + "\n\n" -}}
+##- Node macro
+#  macro each_node(node)
+#     if node.isVariable()
+#        if node.tokenId() == 'INT'
+            {{- node.value() -}}
+#        elif node.tokenId() == 'STRING'
+            {{- "[" + ord(node.value()) + "]" -}}
+#        else
+            {{- node.value() -}}
+#        endif
+#     elif node.isTuple()
+         ## A tuple
+         {{- "(" + foreach(node, each_node, ", ") + ")" -}}      
+#     elif node.isList()
+         ## A list
+         {{- "[" + foreach(node, each_node, ", ") + "]" -}}      
+#     elif node.isApplication()
+         ## A function call
+         {{- foreach(node, each_node, " ") -}} 
+#     elif node.isLambda()
+         ## A lambda function
+         {{- "\\\\(" + node[0]|join(', ') + ") -> " + each_node(node[1]) -}}
 #     endif
-#  endfor
+# endmacro
+
+##- Define a haskell function for every definition in ast
+      {{- name + " :: " + typestr(type) + "\n" -}}
+#-    if value.isLambda()
+      {{- name ~ " (" + value[0]|join(', ') + ") = " + each_node(value[1]) + "\n\n" -}}
+#-    else
+      {{- name ~ " = " + each_node(value) + "\n\n" -}}
+#-    endif

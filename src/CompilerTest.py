@@ -4,13 +4,15 @@ from Compiler import Compiler
 class ComplerTest(TestCase):
 
     def testCompileVariable(self):
-        (code, errors) = Compiler().compile("def x = y")
+        (code, errors) = Compiler().compile("def x = 12")
 
         # assert that no error occured
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(code.strip(), "x = y")
+        self.assertEqual(code.strip().splitlines(), [
+                        "z_x :: Int", 
+                        "z_x = 12"])
 
 
     def testCompileFunction(self):
@@ -20,17 +22,34 @@ class ComplerTest(TestCase):
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(code.strip(), "f x = x")
+        self.assertEqual(code.strip().splitlines(), [
+                        "z_f :: a -> a", 
+                        "z_f (z_x) = z_x"])
 
 
     def testCompileTuple(self):
-        (code, errors) = Compiler().compile("def t = (a, b)")
+        (code, errors) = Compiler().compile("def t = (true, lambda(x) x, 9)")
 
         # assert that no error occured
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(code.strip(), "t = (a, b)")
+        self.assertEqual(code.strip().splitlines(), [
+                        "z_t :: (Bool, a -> a, Int)", 
+                        "z_t = (z_true, \\(z_x) -> z_x, 9)"])
+
+
+    def testCompileList(self):
+        (code, errors) = Compiler().compile("def l = [1, 2, 3]")
+
+        # assert that no error occured
+        self.assertEqual(errors, [])
+
+        # assert correct parsing
+        self.assertEqual(code.strip().splitlines(), [
+                        "z_l :: [Int]",
+                        "z_l = [1, 2, 3]"])
+
 
 
     def testCompileLambda(self):
@@ -40,6 +59,8 @@ class ComplerTest(TestCase):
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(code.strip(), "f x = \y -> x")
+        self.assertEqual(code.strip().splitlines(), [
+                        "z_f :: a -> b -> a",
+                        "z_f (z_x) = \\(z_y) -> z_x"])
 
 

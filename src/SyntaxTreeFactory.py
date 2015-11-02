@@ -1,23 +1,69 @@
-from Node import Node
+from Node import Node, VariableNode, TupleNode, ListNode, ApplicationNode, LambdaNode, LetNode
+from ply.lex import LexToken
 
 def nodes(tokens):
-    return list( map( lambda x: Node(x, []), tokens ) )
+    return list( map( lambda x: VariableNode(x), tokens ) )
 
 class SyntaxTreeFactory:
-    def createDefinition(self, def_token, dec_node):
-        return Node(def_token, dec_node)
+    functionMapping = {
+        '+'  : 'add',
+        '-'  : 'sub',
+        '*'  : 'mul',
+        '/'  : 'div',
+        '==' : 'eq',
+        '!=' : 'ne',
+        '<=' : 'le',
+        '>=' : 'ge',
+        '<'  : 'lt',
+        '>'  : 'gt',
+    }
 
-    def createDeclaration(self, id_token, params):
-        return Node(id_token,  nodes(params))
+    def createFunctionDefinition(self, def_token, var_token, params, val_node):
+       lamToken = LexToken()
+       lamToken.value = 'lambda'
+       lamToken.type = 'LAMBDA'
+       return LetNode(def_token, [ 
+            VariableNode(var_token),
+            LambdaNode(lamToken, [ Node(None, None, nodes(params)), val_node ]), 
+            ])
+
+    def createVariableDefinition(self, def_token, var_token, val_node):
+       return LetNode(def_token, [ 
+            VariableNode(var_token), 
+            val_node 
+            ])
 
     def createLambda(self, lambda_token, params, val):
-        return Node(lambda_token, [ Node(None, nodes(params)), val ])
+        if len(params) > 0:
+            return LambdaNode(lambda_token, [ Node(None, None, nodes(params)), val ])
+        else:
+            return VariableNode(lambda_token, [ val ])
 
     def createTuple(self, args):
-        return Node(None, args)
+        return TupleNode(args)
 
-    def createCall(self, var_token, args):
-        return Node(var_token, args)
+    def createList(self, args):
+        return ListNode(args)
+
+    def createCall(self, var_token, arg_node):
+        e1 = self.createVariable(var_token)
+        return self.createApplication(e1, arg_node)
+
+    def createApplication(self, e1, e2):
+        return ApplicationNode(None, [e1, e2])
 
     def createVariable(self, var_token):
-        return Node(var_token, [])
+        if var_token.value in self.functionMapping:
+            var_token.value = self.functionMapping[var_token.value]
+    
+        return VariableNode(var_token)
+
+    def createInteger(self, var_token):
+        return VariableNode(var_token)
+
+    def createBoolean(self, var_token):
+        return VariableNode(var_token)
+
+    def createString(self, var_token):
+        return VariableNode(var_token)
+

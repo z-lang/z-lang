@@ -1,0 +1,20 @@
+// sum
+def sum(numbers) = reduce(numbers, 0, lambda(a, b) a + b)
+
+// prod
+def prod(numbers) = reduce(numbers, 1, lambda(a, b) a * b)
+
+// fibonacci
+def fib(x) = case( 
+               x < 2, 
+               1, 
+               fib(x - 2) + fib(x - 1) 
+            )
+
+// faculty
+def fac(x) = case( 
+               x == 1, 
+               1, 
+               x * fac(x - 1) 
+            )
+
