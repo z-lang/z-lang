@@ -19,8 +19,8 @@ class Grammer:
             p[0] = [ p[1] ]
             
     def p_definition(self, p):
-        '''definition : DEF ID parameters EQ value
-                    | DEF ID EQ value'''
+        '''definition : DEF ID parameters EQ expr
+                    | DEF ID EQ expr'''
         if len(p) == 6:
             p[0] = self.factory.createFunctionDefinition(p[1], p[2], p[3], p[5])
         else:
@@ -38,6 +38,32 @@ class Grammer:
             p[0].append(p[3])
         else:
             p[0] = [ p[1] ]
+
+    def p_expr(self, p):
+        '''expr : expr ADD term
+                | expr SUB term
+                | term'''
+        if len(p) > 2:
+            if p[2].value == '+':
+                p[2].value = 'add'
+            else: 
+                p[2].value = 'sub'
+            p[0] = self.factory.createCall(p[2], [ p[1], p[3] ])
+        else:
+            p[0] = p[1]
+
+    def p_term(self, p):
+        '''term : term MUL value
+                | term DIV value
+                | value'''
+        if len(p) > 2:
+            if p[2].value == '*':
+                p[2].value = 'mul'
+            else: 
+                p[2].value = 'div'
+            p[0] = self.factory.createCall(p[2], [ p[1], p[3] ])
+        else:
+            p[0] = p[1]
 
     def p_value(self, p):
         '''value : LAMBDA parameters value

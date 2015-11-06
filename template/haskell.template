@@ -44,4 +44,13 @@
 # if library
 true = True
 false = False
+
+case :: Bool a b -> c
+case True a b = a
+case False a b = b
+
+add = (+)
+sub = (-)
+mul = (*)
+div = (/)
 # endif

@@ -3,16 +3,20 @@ import ply.lex as lex
 # The Scanner class defines how to parse the tokens
 class Scanner:
     # Language tokens
-    tokens = [ 'DEF', 'LAMBDA', 'NEWLINE','EQ', 'COMMA', 'LP', 'RP', 'ID', 'INT', 'BOOL', 'COMMENT' ]
+    tokens = [ 'DEF', 'LAMBDA', 'NEWLINE','EQ', 'COMMA', 'LP', 'RP', 'ADD', 'SUB', 'MUL', 'DIV', 'ID', 'INT', 'BOOL', 'COMMENT' ]
 
     # Simple rules
-    t_ignore = ' \t'
-    t_ID     = '[A-Za-z][A-Za-z0-9]*'
-    t_INT     = '-?[0-9]+'
-    t_EQ     = '='
-    t_COMMA  = ','
-    t_LP     = '\('
-    t_RP     = '\)'
+    t_ignore= ' \t'
+    t_ID    = '[A-Za-z][A-Za-z0-9]*'
+    t_INT   = '-?[0-9]+'
+    t_EQ    = '='
+    t_COMMA = ','
+    t_LP    = '\('
+    t_RP    = '\)'
+    t_ADD   = '\+'
+    t_SUB   = '-'
+    t_MUL   = '\*'
+    t_DIV   = '/'
 
     # Keyword for definitons
     def t_DEF(self, t):
