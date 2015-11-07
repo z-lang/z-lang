@@ -39,6 +39,12 @@ class Node:
     def isVariable(self):
         return self.syntax == Syntax.Variable
 
+    def isTuple(self):
+        return self.syntax == Syntax.Tuple
+
+    def isList(self):
+        return self.syntax == Syntax.List
+
     def isApplication(self):
         return self.syntax == Syntax.Application
 

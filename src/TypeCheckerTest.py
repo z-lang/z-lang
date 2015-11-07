@@ -14,7 +14,7 @@ class TypeCheckerTest(TestCase):
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(str(type), "[int]")
+        self.assertEqual(str(type), "Int")
 
 
     def testFunctionType(self):
@@ -36,7 +36,18 @@ class TypeCheckerTest(TestCase):
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(str(type), "([int], [int])")
+        self.assertEqual(str(type), "(Int, Int)")
+
+
+    def testListType(self):
+        (definitions, errors) = Parser().parse("def t = [1, 5, 6]")
+        type = TypeChecker().check(errors, Environment(), definitions[0])
+
+        # assert that no error occured
+        self.assertEqual(errors, [])
+
+        # assert correct parsing
+        self.assertEqual(str(type), "[Int]")
 
 
     def testLambdaType(self):
@@ -58,7 +69,7 @@ class TypeCheckerTest(TestCase):
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(str(type), "[int]")
+        self.assertEqual(str(type), "Int")
 
 
     def testNegativeIntegerTest(self):
@@ -69,7 +80,7 @@ class TypeCheckerTest(TestCase):
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(str(type), "[int]")
+        self.assertEqual(str(type), "Int")
 
 
     def testTrueType(self):
@@ -80,7 +91,7 @@ class TypeCheckerTest(TestCase):
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(str(type), "[bool]")
+        self.assertEqual(str(type), "Bool")
 
 
     def testFalseTest(self):
@@ -91,7 +102,7 @@ class TypeCheckerTest(TestCase):
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(str(type), "[bool]")
+        self.assertEqual(str(type), "Bool")
 
 
     def testFunctionApplication(self):
@@ -110,7 +121,7 @@ class TypeCheckerTest(TestCase):
         self.assertEqual(str(id_type), "a -> a")
 
         # assert correct parsing
-        self.assertEqual(str(value_type), "[int]")
+        self.assertEqual(str(value_type), "Int")
 
 
     def testFunctionApplicationWithTwoArguments(self):
@@ -129,7 +140,7 @@ class TypeCheckerTest(TestCase):
         self.assertEqual(str(id_type), "(a, b) -> b")
 
         # assert correct parsing
-        self.assertEqual(str(value_type), "[bool]")
+        self.assertEqual(str(value_type), "Bool")
 
 
     def testFunctionApplicationWithConstantExpression(self):
@@ -145,10 +156,10 @@ class TypeCheckerTest(TestCase):
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(str(id_type), "(a, b) -> [int]")
+        self.assertEqual(str(id_type), "(a, b) -> Int")
 
         # assert correct parsing
-        self.assertEqual(str(value_type), "[int]")
+        self.assertEqual(str(value_type), "Int")
 
     def testRecursiveFunction(self):
         (definitions, errors) = Parser().parse("""

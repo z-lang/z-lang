@@ -1,6 +1,7 @@
 from Environment import Environment
 from Node import VariableNode
-from Type import Type, TypeVariable, ConcreteType, Function, Integer, Boolean, Tuple
+from Type import Type, TypeVariable, ConcreteType, Function, Integer, Boolean, Tuple, List
+from functools import reduce
 
 class TypeError(Type):
     def __init__(self):
@@ -15,6 +16,19 @@ class TypeChecker:
     def check(self, errors, env, node):
         if node.isVariable():
             return self.getType(errors, env, node)
+        elif node.isTuple():
+            return Tuple(list(map(lambda n: self.check(errors, env, n), node)))
+        elif node.isList():
+            if len(node) == 0:
+                return List(TypeVariable())
+            else:
+                type_a = TypeVariable()
+                for child in node:
+                    type_b = self.check(errors, env, child)
+                    if len(self.unify(type_a, type_b)) != 0:
+                        return TypeError()
+                    type_a = type_b
+                return List(type_a)
         elif node.isApplication():
             fun_type = self.check(errors, env, VariableNode(node.token, [])).copy()
             arg_type = Tuple(list(map(lambda child: self.check(errors, env, child), node)))
@@ -40,17 +54,14 @@ class TypeChecker:
 
 
     def getType(self, errors, env, node):
-        if len(node) == 0:
-            if node.tokenId() in self.concreteTypes:
-                return self.concreteTypes[node.tokenId()]
-            elif env.get(node.value()) != None:
-                (type, node) = env.get(node.value())
-                return type
-            else:
-                errors += "error unknown: " + str(node) + " tokenid " + node.tokenId()
-                return TypeError()
+        if node.tokenId() in self.concreteTypes:
+            return self.concreteTypes[node.tokenId()]
+        elif env.get(node.value()) != None:
+            (type, node) = env.get(node.value())
+            return type
         else:
-            return Tuple(list(map(lambda n: self.getType(errors, env, n), node)))
+            errors += "error unknown: " + str(node) + " tokenid " + node.tokenId()
+            return TypeError()
 
 
     def unify(self, type_a, type_b):

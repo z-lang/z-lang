@@ -35,7 +35,7 @@ class SyntaxTreeFactory:
     def createTuple(self, args):
         return TupleNode(args)
 
-    def createList(self, arg):
+    def createList(self, args):
         return ListNode(args)
 
     def createCall(self, var_token, args):

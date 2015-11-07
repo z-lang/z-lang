@@ -21,3 +21,5 @@ def b = f(1)(2)
 
 def sum2(a, b) = a + b
 
+def list = [1, 2, 3]
+

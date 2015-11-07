@@ -24,13 +24,24 @@ class ComplerTest(TestCase):
 
 
     def testCompileTuple(self):
-        (code, errors) = Compiler().compile("def t = (a, b)")
+        (code, errors) = Compiler().compile("def t = (a, lambda(x) x, 9)")
 
         # assert that no error occured
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(code.strip(), "t = (a, b)")
+        self.assertEqual(code.strip(), "t = (a, \\x -> x, 9)")
+
+
+    def testCompileList(self):
+        (code, errors) = Compiler().compile("def t = [a, b, c]")
+
+        # assert that no error occured
+        self.assertEqual(errors, [])
+
+        # assert correct parsing
+        self.assertEqual(code.strip(), "t = [a, b, c]")
+
 
 
     def testCompileLambda(self):

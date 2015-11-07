@@ -13,13 +13,14 @@
 ##- Recursive macro for each node value
 #  macro each_node(node)
 #     if node.isVariable()
-#        if node|length == 0
-            ## A variable
-            {{- node.value() -}}
-#        else
-            ## A tuple value
-            {{- "(" + foreach(node, each_node, ", ") + ")" -}}      
-#        endif
+         ## A variable
+         {{- node.value() -}}
+#     elif node.isTuple()
+         ## A tuple
+         {{- "(" + foreach(node, each_node, ", ") + ")" -}}      
+#     elif node.isList()
+         ## A list
+         {{- "[" + foreach(node, each_node, ", ") + "]" -}}      
 #     elif node.isApplication()
          ## A function call
          {{- "(" ~ node + " " + foreach(node, each_node, " ") + ")" -}} 

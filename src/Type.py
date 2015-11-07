@@ -18,12 +18,22 @@ class Type:
                 var = alphabet(len(mapping))
                 mapping[self] = var
                 return var
-        elif self.isConcrete():
-            if len(self.types) == 0:
-                return "[%s]" % self.name
-            else:
-                subnodes = map(lambda x: x.str(mapping), self.types)
-                return "(%s)" % ', '.join(subnodes)
+        elif self.isTuple():
+            subnodes = map(lambda x: x.str(mapping), self.types)
+            return "(%s)" % ', '.join(subnodes)
+        elif self.isList():
+            subnodes = map(lambda x: x.str(mapping), self.types)
+            return "[%s]" % ', '.join(subnodes)
+        elif self.isInteger():
+            return "Int"
+        elif self.isBoolean():
+            return "Bool"
+        #elif self.isConcrete():
+        #    if len(self.types) == 0:
+        #        return "%s" % self.name
+        #    else:
+        #        subnodes = map(lambda x: x.str(mapping), self.types)
+        #        return "(%s)" % ', '.join(subnodes)
         elif self.isFunction():
             return self.types[0].str(mapping) + " -> " + self.types[1].str(mapping)
         else:
@@ -48,11 +58,23 @@ class Type:
     def isVariable(self):
         return self.name == None
 
-    def isConcrete(self):
-        return not ( self.isFunction() or self.isVariable() )
+    def isTuple(self):
+        return self.name == "tuple"
+
+    def isList(self):
+        return self.name == "list"
+
+    #def isConcrete(self):
+    #    return not ( self.isFunction() or self.isVariable() )
 
     def isFunction(self):
-        return self.name == "->"
+        return self.name == "function"
+
+    def isInteger(self):
+        return self.name == "Int"
+
+    def isBoolean(self):
+        return self.name == "Bool"
 
     
 class TypeVariable(Type):
@@ -67,11 +89,11 @@ class ConcreteType(Type):
 
 class Function(Type):
     def __init__(self, arg_type, ret_type):
-        super().__init__("->", [arg_type, ret_type]) 
+        super().__init__("function", [arg_type, ret_type]) 
 
 
-Integer = ConcreteType("int", [])
-Boolean = ConcreteType("bool", [])
+Integer = ConcreteType("Int", [])
+Boolean = ConcreteType("Bool", [])
 
 def Tuple(types):
         if len(types) == 1:
