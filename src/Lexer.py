@@ -2,21 +2,49 @@ import ply.lex as lex
 
 # The Scanner class defines how to parse the tokens
 class Scanner:
+    # Language literals
+    literals = [ '(', ')', '[', ']', ',', '=', '+', '-', '*', '/' ]
+
     # Language tokens
-    tokens = [ 'DEF', 'LAMBDA', 'NEWLINE','EQ', 'COMMA', 'LP', 'RP', 'ADD', 'SUB', 'MUL', 'DIV', 'ID', 'INT', 'BOOL', 'COMMENT' ]
+    tokens = [ 
+        'DEF', 
+        'LAMBDA', 
+        'AND', 
+        'OR', 
+        'XOR', 
+        'NEWLINE',
+        #'EQ', 
+        #'COMMA', 
+        #'LP', 
+        #'RP', 
+        #'LB', 
+        #'RB', 
+        #'ADD', 
+        #'SUB', 
+        #'MUL', 
+        #'DIV', 
+        'ID', 
+        'INT', 
+        'BOOL', 
+        'STRING', 
+        'COMMENT' 
+    ]
 
     # Simple rules
-    t_ignore= ' \t'
-    t_ID    = '[A-Za-z][A-Za-z0-9]*'
-    t_INT   = '-?[0-9]+'
-    t_EQ    = '='
-    t_COMMA = ','
-    t_LP    = '\('
-    t_RP    = '\)'
-    t_ADD   = '\+'
-    t_SUB   = '-'
-    t_MUL   = '\*'
-    t_DIV   = '/'
+    t_ignore = ' \t'
+    t_ID     = '[A-Za-z][A-Za-z0-9]*'
+    t_INT    = '-?[0-9]+'
+   # t_EQ     = '='
+   # t_COMMA  = ','          # comma (tuple)
+    #t_LP     = '\('         # left paranthesis (tuple)
+    #t_RP     = '\)'         # right parenthesis (tuple)
+    #t_LB     = '\['         # left bracket (list)
+    #t_RB     = '\]'         # right bracket (list)
+    #t_ADD    = '\+'         # integer addition
+    #t_SUB    = '-'          # integer subtract
+    #t_MUL    = '\*'         # integer multiplication
+    #t_DIV    = '/'          # integer division
+    t_STRING = '"[^"]*"'    # string
 
     # Keyword for definitons
     def t_DEF(self, t):
@@ -27,6 +55,22 @@ class Scanner:
     def t_LAMBDA(self, t):
         'lambda'
         return t
+
+    # Keyword for logical and
+    def t_AND(self, t):
+        'and'
+        return t
+
+    # Keyword for logical or
+    def t_OR(self, t):
+        'or'
+        return t
+
+    # Keyword for logical xor
+    def t_XOR(self, t):
+        'xor'
+        return t
+
 
     # Ignore comments
     def t_COMMENT(self, t):

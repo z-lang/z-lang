@@ -45,9 +45,9 @@
 true = True
 false = False
 
-case :: Bool a b -> c
-case True a b = a
-case False a b = b
+ifelse :: Bool -> a -> a -> a
+ifelse True a b = a
+ifelse False a b = b
 
 add = (+)
 sub = (-)

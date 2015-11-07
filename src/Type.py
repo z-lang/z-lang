@@ -77,3 +77,6 @@ def Tuple(types):
         if len(types) == 1:
             return types[0]
         return ConcreteType("tuple", types)
+
+def List(type):
+        return ConcreteType("list", [type])

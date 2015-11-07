@@ -1,8 +1,10 @@
 class Syntax:
     Variable    = 0
-    Application = 1
-    Lambda      = 2
-    Let         = 3
+    Tuple       = 1
+    List        = 2
+    Application = 3
+    Lambda      = 4
+    Let         = 5
 
 class Node:
     def __init__(self, syntax, token, children):
@@ -48,17 +50,23 @@ class Node:
 
 
 
-def variableNode(token, children):
+def VariableNode(token, children):
     return Node(Syntax.Variable, token, children)
 
+def TupleNode(children):
+    return Node(Syntax.Tuple, None, children)
 
-def applicationNode(token, children):
+def ListNode(children):
+    return Node(Syntax.List, None, children)
+
+
+def ApplicationNode(token, children):
     return Node(Syntax.Application, token, children)
 
 
-def lambdaNode(token, children):
+def LambdaNode(token, children):
     return Node(Syntax.Lambda, token, children)
 
-def letNode(token, children):
+def LetNode(token, children):
     return Node(Syntax.Let, token, children)
 

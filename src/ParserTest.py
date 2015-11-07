@@ -45,6 +45,16 @@ class ParserTest(TestCase):
             flatten(definitions[0]),
             "def(t (a b))")
 
+    def testParseList(self):
+        (definitions, errors) = Parser().parse("def list = [a, b]")
+
+        # assert that no error occured
+        self.assertEqual(errors, [])
+
+        # assert correct parsing
+        self.assertEqual(
+            flatten(definitions[0]),
+            "def(list (a b))")
 
     def testParseLambda(self):
         (definitions, errors) = Parser().parse("def f(x) = lambda(y) x")
@@ -104,6 +114,18 @@ class ParserTest(TestCase):
         self.assertEqual(
             flatten(definitions[0]),
             "def(boolean false)")
+
+
+    def testParseString(self):
+        (definitions, errors) = Parser().parse("def string = \"Hello, World!\"")
+
+        # assert that no error occured
+        self.assertEqual(errors, [])
+
+        # assert correct parsing
+        self.assertEqual(
+            flatten(definitions[0]),
+            "def(string \"Hello, World!\")")
 
 
 

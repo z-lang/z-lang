@@ -1,5 +1,5 @@
 from Environment import Environment
-from Node import variableNode
+from Node import VariableNode
 from Type import Type, TypeVariable, ConcreteType, Function, Integer, Boolean, Tuple
 
 class TypeError(Type):
@@ -16,7 +16,7 @@ class TypeChecker:
         if node.isVariable():
             return self.getType(errors, env, node)
         elif node.isApplication():
-            fun_type = self.check(errors, env, variableNode(node.token, [])).copy()
+            fun_type = self.check(errors, env, VariableNode(node.token, [])).copy()
             arg_type = Tuple(list(map(lambda child: self.check(errors, env, child), node)))
             result_type = TypeVariable()
             self.unify(Function(arg_type, result_type), fun_type)
