@@ -1,40 +1,30 @@
-
-def alphabet(x):
-    if x < 26:
-        return chr(x + ord('a'))
-    else:
-        return chr((x % 26) + ord('a')) + alphabet(x-26)
+from UniqueLetter import UniqueLetter
 
 class Type:
     def __init__(self, name, types):
         self.name = name
         self.types = types
 
-    def str(self, mapping):
+    def str(self, unique):
         if self.isVariable():
-            if self in mapping:
-                return mapping[self]
-            else:
-                var = alphabet(len(mapping))
-                mapping[self] = var
-                return var
+            return unique[self]
         elif self.isTuple():
-            subnodes = map(lambda x: x.str(mapping), self.types)
+            subnodes = map(lambda x: x.str(unique), self.types)
             return "(%s)" % ', '.join(subnodes)
         elif self.isList():
-            subnodes = map(lambda x: x.str(mapping), self.types)
+            subnodes = map(lambda x: x.str(unique), self.types)
             return "[%s]" % ', '.join(subnodes)
         elif self.isInteger():
             return "Int"
         elif self.isBoolean():
             return "Bool"
         elif self.isFunction():
-            return self.types[0].str(mapping) + " -> " + self.types[1].str(mapping)
+            return self.types[0].str(unique) + " -> " + self.types[1].str(unique)
         else:
             return "?"
 
     def __str__(self, mapping={}):
-        return self.str({})
+        return self.str(UniqueLetter())
 
     def copy(self, mapping={}):
         copy = Type(self.name, [])
@@ -57,9 +47,6 @@ class Type:
 
     def isList(self):
         return self.name == "list"
-
-    #def isConcrete(self):
-    #    return not ( self.isFunction() or self.isVariable() )
 
     def isFunction(self):
         return self.name == "function"
