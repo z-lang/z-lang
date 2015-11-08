@@ -161,6 +161,60 @@ class TypeCheckerTest(TestCase):
         # assert correct parsing
         self.assertEqual(str(value_type), "Int")
 
+    def testPartialFunctionApplication(self):
+        (definitions, errors) = Parser().parse("""
+            def sum(a) = lambda(b) a + b
+            def inc = sum(1)
+        """)
+        env = Environment()
+        sum_type = TypeChecker().check(errors, env, definitions[0])
+        inc_type = TypeChecker().check(errors, env, definitions[1])
+
+        # assert that no error occured
+        self.assertEqual(errors, [])
+
+        # assert correct parsing
+        self.assertEqual(str(sum_type), "Int -> Int -> Int")
+
+        # assert correct parsing
+        self.assertEqual(str(inc_type), "Int -> Int")
+
+    def testMultipleFunctionApplication(self):
+        (definitions, errors) = Parser().parse("""
+            def prod = lambda(x) lambda(y) lambda(z) z * y * x
+            def value = prod(8)(5)(3)
+        """)
+        env = Environment()
+        prod_type = TypeChecker().check(errors, env, definitions[0])
+        value_type = TypeChecker().check(errors, env, definitions[1])
+
+        # assert that no error occured
+        self.assertEqual(errors, [])
+
+        # assert correct parsing
+        self.assertEqual(str(prod_type), "Int -> Int -> Int -> Int")
+
+        # assert correct parsing
+        self.assertEqual(str(value_type), "Int")
+
+    def testFunctionComposition(self):
+        (definitions, errors) = Parser().parse("""
+            def composition(f, g) = lambda(x) f( g(x) )
+            def app = composition(lambda(x) x + 3, lambda(x) x - 4)(10)
+        """)
+        env = Environment()
+        composition_type = TypeChecker().check(errors, env, definitions[0])
+        app_type = TypeChecker().check(errors, env, definitions[1])
+
+        # assert that no error occured
+        self.assertEqual(errors, [])
+
+        # assert correct parsing
+        self.assertEqual(str(composition_type), "(a -> b, c -> a) -> c -> b")
+
+        # assert correct parsing
+        self.assertEqual(str(app_type), "Int")
+
     def testRecursiveFunction(self):
         (definitions, errors) = Parser().parse("""
             def rec(x) = rec(x)

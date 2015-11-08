@@ -1,7 +1,6 @@
 from Environment import Environment
 from Node import VariableNode
-from Type import Type, TypeVariable, ConcreteType, Function, Integer, Boolean, Tuple, List
-from functools import reduce
+from Type import Type, TypeVariable, Function, Integer, Boolean, Tuple, List
 
 class TypeError(Type):
     def __init__(self):

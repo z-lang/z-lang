@@ -43,3 +43,8 @@ def boolean(a, b, c)  =  a and b or a or not b
 
 def g(x) = (lambda(a) a, lambda(b) b)
 
+def t = (1, 2)
+
+def q(a, b) = a + b
+
+def r = q(t)
