@@ -22,15 +22,14 @@ class TypeChecker:
             type_a = TypeVariable()
             for child in node:
                 type_b = self.check(errors, env, child)
-                if len(self.unify(type_a, type_b)) != 0:
-                    return TypeError()
+                self.unify(errors, type_a, type_b)
                 type_a = type_b
             return List(type_a)
         elif node.isApplication():
             fun_type = self.check(errors, env, VariableNode(node.token, [])).copy()
             arg_type = Tuple(list(map(lambda child: self.check(errors, env, child), node)))
             result_type = TypeVariable()
-            self.unify(Function(arg_type, result_type), fun_type)
+            self.unify(errors, Function(arg_type, result_type), fun_type)
             return result_type
         elif node.isLambda():
             args = list(map(lambda x: TypeVariable(), node[0]))
@@ -44,10 +43,10 @@ class TypeChecker:
             new_type = TypeVariable()
             env.add(node[0].value(), new_type, node[1])
             def_type = self.check(errors, env, node[1])
-            self.unify(new_type, def_type)
+            self.unify(errors, new_type, def_type)
             return self.check(errors, env, node[1])
         else:
-            print("type error: (" + str(node) + ")")
+            errors.append("type error: (" + str(node) + ")")
             return TypeError()
 
 
@@ -58,22 +57,24 @@ class TypeChecker:
             (type, n) = env.get(node.value())
             return type
         else:
-            errors += "error unknown: " + str(node) + " tokenid " + node.tokenId()
+            errors.append("error " + str(node.token.lineno) + ": unknown variable or function: '" + str(node) + "'")
             return TypeError()
 
 
-    def unify(self, type_a, type_b):
-        errors = []
-
+    def unify(self, errors, type_a, type_b):
         if type_b.isVariable():
             type_b.name = type_a.name
             type_b.types = type_a.types
+            return type_a
         elif type_a.isVariable():
-            self.unify(type_b, type_a)
+            return self.unify(errors, type_b, type_a)
         else:
             if (type_a.name != type_b.name or len(type_a.types) != len(type_b.types)):
-                return "type mismatch error"
+                errors.append("error:" + "type mismatch '" + str(type_a) + "' != '" + str(type_b) + "'")
+                return TypeError()
             else:
                 for subtype_a, subtype_b in zip(type_a.types, type_b.types):
-                    errors += self.unify(subtype_a, subtype_b)
-        return errors
+                    self.unify(errors, subtype_a, subtype_b)
+                return type_a
+        errors.append("type mismatch error2")
+        return TypeError()

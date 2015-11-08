@@ -4,13 +4,13 @@ from Compiler import Compiler
 class ComplerTest(TestCase):
 
     def testCompileVariable(self):
-        (code, errors) = Compiler().compile("def x = y")
+        (code, errors) = Compiler().compile("def x = 12")
 
         # assert that no error occured
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(code.strip(), "z_x = z_y")
+        self.assertEqual(code.strip(), "z_x = 12")
 
 
     def testCompileFunction(self):
@@ -24,23 +24,23 @@ class ComplerTest(TestCase):
 
 
     def testCompileTuple(self):
-        (code, errors) = Compiler().compile("def t = (a, lambda(x) x, 9)")
+        (code, errors) = Compiler().compile("def t = (true, lambda(x) x, 9)")
 
         # assert that no error occured
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(code.strip(), "z_t = (z_a, \\(z_x) -> z_x, 9)")
+        self.assertEqual(code.strip(), "z_t = (z_true, \\(z_x) -> z_x, 9)")
 
 
     def testCompileList(self):
-        (code, errors) = Compiler().compile("def t = [a, b, c]")
+        (code, errors) = Compiler().compile("def t = [1, 2, 3]")
 
         # assert that no error occured
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(code.strip(), "z_t = [z_a, z_b, z_c]")
+        self.assertEqual(code.strip(), "z_t = [1, 2, 3]")
 
 
 
