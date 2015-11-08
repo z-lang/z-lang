@@ -19,10 +19,10 @@ def fib(x) = ifelse(
             )
 
 // faculty
-def faculty(x) = ifelse(
+def fac(x) = ifelse(
                   x == 1,
                   1,
-                  x * faculty(x - 1)
+                  x * fac(x - 1)
                  )
 
 // endless recursion
@@ -31,9 +31,9 @@ def rec(x) = rec(x)
 // test
 def f(x) = lambda(y) y
 //def a = f(1, 2)
-//def b = f(1)(2)
+def b = f(1)(2)
 
-def sum2(a, b) = a + b
+def sum(a, b) = a + b
 
 def list = [1, 2, 3]
 

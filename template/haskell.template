@@ -8,9 +8,26 @@
 #     endfor
 #  endmacro
 
+##- Type macro
+# macro typestr(type)
+#     if type.isVariable()
+         {{- unique(type) -}}
+#     elif type.isInteger()
+         {{- "Integer" -}}
+#     elif type.isBoolean()
+         {{- "Bool" -}}
+#     elif type.isTuple()
+         {{- "(" + foreach(type.types, typestr, ", ") + ")" -}}
+#     elif type.isList()
+         {{- "[" + foreach(type.types, typestr, "") + "]" -}}
+#     elif type.isFunction()
+         {{- foreach(type.types, typestr, " -> ") -}}
+#     else
+         {{- "?" -}}
+#     endif
+# endmacro
 
-
-##- Recursive macro for each node value
+##- Node macro
 #  macro each_node(node)
 #     if node.isVariable()
 #        if node.tokenId() == 'INT'
@@ -28,49 +45,44 @@
          {{- "[" + foreach(node, each_node, ", ") + "]" -}}      
 #     elif node.isApplication()
          ## A function call
-         {{- "(z_" ~ node + " " + foreach(node, each_node, " ") + ")" -}} 
+         {{- foreach(node, each_node, " ") -}} 
 #     elif node.isLambda()
          ## A lambda function
          {{- "\\\\(z_" + node[0]|join(' z_') + ") -> " + each_node(node[1]) -}}
 #     endif
 # endmacro
 
+##- Define a haskell function for every definition in ast
+#- if library == False
+         {{- "z_" + name + " :: " + typestr(type) + "\n" -}}
+#-     if value.isLambda()
+         {{- "z_" ~ name ~ " (z_" + value[0]|join(', z_') + ") = " + each_node(value[1]) + "\n\n" -}}
+#-     else
+         {{- "z_" ~ name ~ " = " + each_node(value) + "\n\n" -}}
+#-     endif
+#- else
+##- Library functions
 
-
-## Define a haskell function for every definition in ast
-#  for definition in definitions
-#     if definition[1].isLambda()
-      {{- "z_" ~ definition[0] ~ " (z_" + definition[1][0]|join(', z_') + ") = " + each_node(definition[1][1]) + "\n\n" -}}
-#     else
-      {{- "z_" ~ definition[0] ~ " = " + each_node(definition[1]) + "\n\n" -}}
-#     endif
-#  endfor
-
-## Library functions
-# if library
-
-## boolean operations
+##- boolean operations
 z_true = True
 z_false = False
-z_and a b = and [a, b]
-z_or  a b = or [a, b]
-z_not a = not a
+z_and(a, b) = and [a, b]
+z_or(a, b) = or [a, b]
+z_not(a) = not a
 
-z_ifelse :: Bool -> a -> a -> a
-z_ifelse True a b = a
-z_ifelse False a b = b
+z_ifelse :: (Bool, a, a) -> a
+z_ifelse(True, a, b) = a
+z_ifelse(False, a, b) = b
 
-## arithmetic operations
-z_add = (+)
-z_sub = (-)
-z_mul = (*)
-z_div = (/)
-z_eq a b = a == b
-z_ne a b = a /= b
-z_le a b = a <= b
-z_ge a b = a >= b
-z_lt a b = a < b
-z_gt a b = a > b
-
-
-# endif
+##- arithmetic operations
+z_add(a, b) = a + b
+z_sub(a, b) = a - b
+z_mul(a, b) = a * b
+z_div(a, b) = a / b
+z_eq(a, b)  = a == b
+z_ne(a, b)  = a /= b
+z_le(a, b)  = a <= b
+z_ge(a, b)  = a >= b
+z_lt(a, b)  = a < b
+z_gt(a, b)  = a > b
+#- endif

@@ -45,12 +45,16 @@ class SyntaxTreeFactory:
         return ListNode(args)
 
     def createCall(self, var_token, args):
+        e1 = self.createVariable(var_token)
+        return self.createApplication(e1, TupleNode(args))
+
+    def createApplication(self, e1, e2):
+        return ApplicationNode(None, [e1, e2])
+
+    def createVariable(self, var_token):
         if var_token.value in self.functionMapping:
             var_token.value = self.functionMapping[var_token.value]
     
-        return ApplicationNode(var_token, args)
-
-    def createVariable(self, var_token):
         return VariableNode(var_token, [])
 
     def createInteger(self, var_token):

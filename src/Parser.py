@@ -120,17 +120,20 @@ class Grammer:
                  | boolean'''
         p[0] = p[1]
 
+    def p_call(self, p):
+        '''call : ID arguments'''
+        p[0] = self.factory.createVariable(p[1])
+        for args in p[2]:
+            p[0] = self.factory.createApplication(p[0], args)
+
     def p_arguments(self, p):
         '''arguments : arguments tuple
                      | tuple'''
         if len(p) > 2:
-            p[0] = self.factory.createTuple(p[1].children + p[2].children)
-        else:
             p[0] = p[1]
-
-    def p_call(self, p):
-        '''call : ID arguments'''
-        p[0] = self.factory.createCall(p[1], p[2])
+            p[0].append(p[2])
+        else:
+            p[0] = [ p[1] ]
 
     def p_tuple(self, p):
         '''tuple : '(' argument ')' '''

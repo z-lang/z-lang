@@ -26,8 +26,8 @@ class TypeChecker:
                 type_a = type_b
             return List(type_a)
         elif node.isApplication():
-            fun_type = self.check(errors, env, VariableNode(node.token, [])).copy()
-            arg_type = Tuple(list(map(lambda child: self.check(errors, env, child), node)))
+            fun_type = self.check(errors, env, node[0])
+            arg_type = Tuple(list(map(lambda child: self.check(errors, env, child), node[1])))
             result_type = TypeVariable()
             self.unify(errors, Function(arg_type, result_type), fun_type)
             return result_type

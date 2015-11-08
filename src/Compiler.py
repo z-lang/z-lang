@@ -6,6 +6,8 @@ from haskellTemplate import template
 
 class Compiler:
     def compile(self, source, library=False):
+        env = Environment()
+
         # parse input
         (definitions, errors) = Parser().parse(source)
 
@@ -15,14 +17,19 @@ class Compiler:
 
         # type checking
         for definition in definitions:
-            TypeChecker().check(errors, Environment(), definition) 
+            TypeChecker().check(errors, env, definition) 
 
         # check for errors
         if len(errors) > 0:
             return ("", errors)
 
         # code generation
-        code = CodeGenerator().generate(definitions, template, library)
+        generator = CodeGenerator()
+        code = generator.generate(env, template)
+
+        # generate library
+        if library:
+            code += generator.generateLibrary(template)
 
         return (code, errors)
        

@@ -10,7 +10,9 @@ class ComplerTest(TestCase):
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(code.strip(), "z_x = 12")
+        self.assertEqual(code.strip().splitlines(), [
+                        "z_x :: Integer", 
+                        "z_x = 12"])
 
 
     def testCompileFunction(self):
@@ -20,7 +22,9 @@ class ComplerTest(TestCase):
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(code.strip(), "z_f (z_x) = z_x")
+        self.assertEqual(code.strip().splitlines(), [
+                        "z_f :: a -> a", 
+                        "z_f (z_x) = z_x"])
 
 
     def testCompileTuple(self):
@@ -30,17 +34,21 @@ class ComplerTest(TestCase):
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(code.strip(), "z_t = (z_true, \\(z_x) -> z_x, 9)")
+        self.assertEqual(code.strip().splitlines(), [
+                        "z_t :: (Bool, a -> a, Integer)", 
+                        "z_t = (z_true, \\(z_x) -> z_x, 9)"])
 
 
     def testCompileList(self):
-        (code, errors) = Compiler().compile("def t = [1, 2, 3]")
+        (code, errors) = Compiler().compile("def l = [1, 2, 3]")
 
         # assert that no error occured
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(code.strip(), "z_t = [1, 2, 3]")
+        self.assertEqual(code.strip().splitlines(), [
+                        "z_l :: [Integer]",
+                        "z_l = [1, 2, 3]"])
 
 
 
@@ -51,6 +59,8 @@ class ComplerTest(TestCase):
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(code.strip(), "z_f (z_x) = \\(z_y) -> z_x")
+        self.assertEqual(code.strip().splitlines(), [
+                        "z_f :: a -> b -> a",
+                        "z_f (z_x) = \\(z_y) -> z_x"])
 
 
