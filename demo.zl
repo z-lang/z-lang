@@ -23,3 +23,9 @@ def sum2(a, b) = a + b
 
 def list = [1, 2, 3]
 
+
+def boolean(a, b, c)  =  a and b or a or not b
+
+
+def g(x) = (lambda(a) a, lambda(b) b)
+

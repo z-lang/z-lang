@@ -3,7 +3,7 @@ import ply.lex as lex
 # The Scanner class defines how to parse the tokens
 class Scanner:
     # Language literals
-    literals = [ '(', ')', '[', ']', ',', '=', '+', '-', '*', '/' ]
+    literals = [ '(', ')', '[', ']', ',', '=', '<', '>', '+', '-', '*', '/' ]
 
     # Language tokens
     tokens = [ 
@@ -11,22 +11,16 @@ class Scanner:
         'LAMBDA', 
         'AND', 
         'OR', 
-        'XOR', 
+        'NOT', 
         'NEWLINE',
-        #'EQ', 
-        #'COMMA', 
-        #'LP', 
-        #'RP', 
-        #'LB', 
-        #'RB', 
-        #'ADD', 
-        #'SUB', 
-        #'MUL', 
-        #'DIV', 
         'ID', 
         'INT', 
         'BOOL', 
         'STRING', 
+        'EQ',
+        'NE',
+        'LE',
+        'GE',
         'COMMENT' 
     ]
 
@@ -34,17 +28,11 @@ class Scanner:
     t_ignore = ' \t'
     t_ID     = '[A-Za-z][A-Za-z0-9]*'
     t_INT    = '-?[0-9]+'
-   # t_EQ     = '='
-   # t_COMMA  = ','          # comma (tuple)
-    #t_LP     = '\('         # left paranthesis (tuple)
-    #t_RP     = '\)'         # right parenthesis (tuple)
-    #t_LB     = '\['         # left bracket (list)
-    #t_RB     = '\]'         # right bracket (list)
-    #t_ADD    = '\+'         # integer addition
-    #t_SUB    = '-'          # integer subtract
-    #t_MUL    = '\*'         # integer multiplication
-    #t_DIV    = '/'          # integer division
     t_STRING = '"[^"]*"'    # string
+    t_EQ     = '=='
+    t_NE     = '!='
+    t_LE     = '<='
+    t_GE     = '>='
 
     # Keyword for definitons
     def t_DEF(self, t):
@@ -67,10 +55,9 @@ class Scanner:
         return t
 
     # Keyword for logical xor
-    def t_XOR(self, t):
-        'xor'
+    def t_NOT(self, t):
+        'not'
         return t
-
 
     # Ignore comments
     def t_COMMENT(self, t):

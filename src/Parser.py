@@ -20,8 +20,8 @@ class Grammer:
             p[0] = [ p[1] ]
             
     def p_definition(self, p):
-        '''definition : DEF ID parameters '=' expr
-                      | DEF ID '=' expr'''
+        '''definition : DEF ID parameters '=' lambda
+                      | DEF ID '=' lambda'''
         if len(p) == 6:
             p[0] = self.factory.createFunctionDefinition(p[1], p[2], p[3], p[5])
         else:
@@ -39,6 +39,58 @@ class Grammer:
             p[0].append(p[3])
         else:
             p[0] = [ p[1] ]
+
+    def p_lambda(self, p):
+        '''lambda : LAMBDA parameters lambda
+                  | logical_or'''
+        if len(p) == 4:
+            p[0] = self.factory.createLambda(p[1], p[2], p[3])
+        else:
+            p[0] = p[1]
+
+    def p_logical_or(self, p):
+        '''logical_or : logical_or OR logical_and
+                      | logical_and'''
+        if len(p) == 4:
+            p[0] = self.factory.createCall(p[2], [ p[1], p[3] ])
+        else:
+            p[0] = p[1]
+
+    def p_logical_and(self, p):
+        '''logical_and : logical_and AND logical_not
+                       | logical_not'''
+        if len(p) == 4:
+            p[0] = self.factory.createCall(p[2], [ p[1], p[3] ])
+        else:
+            p[0] = p[1]
+
+    def p_logical_not(self, p):
+        '''logical_not : NOT logical_not
+                       | equality'''
+        if len(p) == 3:
+            p[0] = self.factory.createCall(p[1], [ p[2] ])
+        else:
+            p[0] = p[1]
+
+    def p_equality(self, p):
+        '''equality : equality EQ cmp
+                    | equality NE cmp
+                    | cmp'''
+        if len(p) > 2:
+            p[0] = self.factory.createCall(p[2], [ p[1], p[3] ])
+        else:
+            p[0] = p[1]
+
+    def p_cmp(self, p):
+        '''cmp  : expr LE  expr
+                | expr GE  expr
+                | expr '<' expr
+                | expr '>' expr
+                | expr'''
+        if len(p) > 2:
+            p[0] = self.factory.createCall(p[2], [ p[1], p[3] ])
+        else:
+            p[0] = p[1]
 
     def p_expr(self, p):
         '''expr : expr '+' term
@@ -59,8 +111,7 @@ class Grammer:
             p[0] = p[1]
 
     def p_factor(self, p):
-        '''factor : lambda
-                 | tuple
+        '''factor : tuple
                  | list
                  | string
                  | call
@@ -76,10 +127,6 @@ class Grammer:
             p[0] = self.factory.createTuple(p[1].children + p[2].children)
         else:
             p[0] = p[1]
-
-    def p_lambda(self, p):
-        '''lambda : LAMBDA parameters factor'''
-        p[0] = self.factory.createLambda(p[1], p[2], p[3])
 
     def p_call(self, p):
         '''call : ID arguments'''
@@ -111,8 +158,8 @@ class Grammer:
         p[0] = self.factory.createBoolean(p[1])
 
     def p_argument(self, p):
-        '''argument : argument ',' expr
-                    | expr'''
+        '''argument : argument ',' lambda
+                    | lambda'''
         if len(p) > 3:
             p[0] = p[1]
             p[0].append(p[3])
