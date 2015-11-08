@@ -48,6 +48,8 @@
 
 ## Library functions
 # if library
+
+## boolean operations
 z_true = True
 z_false = False
 z_and a b = and [a, b]
@@ -58,9 +60,17 @@ z_ifelse :: Bool -> a -> a -> a
 z_ifelse True a b = a
 z_ifelse False a b = b
 
-
+## arithmetic operations
 z_add = (+)
 z_sub = (-)
 z_mul = (*)
 z_div = (/)
+z_eq a b = a == b
+z_ne a b = a /= b
+z_le a b = a <= b
+z_ge a b = a >= b
+z_lt a b = a < b
+z_gt a b = a > b
+
+
 # endif

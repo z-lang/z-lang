@@ -6,10 +6,16 @@ def nodes(tokens):
 
 class SyntaxTreeFactory:
     functionMapping = {
-        '+' : 'add',
-        '-' : 'sub',
-        '*' : 'mul',
-        '/' : 'div'
+        '+'  : 'add',
+        '-'  : 'sub',
+        '*'  : 'mul',
+        '/'  : 'div',
+        '==' : 'eq',
+        '!=' : 'ne',
+        '<=' : 'le',
+        '>=' : 'ge',
+        '<'  : 'lt',
+        '>'  : 'gt',
     }
 
     def createFunctionDefinition(self, def_token, var_token, params, val_node):

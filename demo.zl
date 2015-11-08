@@ -11,6 +11,20 @@ def identity(x) = x
 // composition
 def composition(f, g) = lambda(x) f( g(x) )
 
+// fibonacci
+def fib(x) = ifelse(
+               x < 2,
+               1, 
+               fib(x - 2) + fib(x - 1)
+            )
+
+// faculty
+def faculty(x) = ifelse(
+                  x == 1,
+                  1,
+                  x * faculty(x - 1)
+                 )
+
 // endless recursion
 def rec(x) = rec(x)
 
