@@ -19,16 +19,13 @@ class TypeChecker:
         elif node.isTuple():
             return Tuple(list(map(lambda n: self.check(errors, env, n), node)))
         elif node.isList():
-            if len(node) == 0:
-                return List(TypeVariable())
-            else:
-                type_a = TypeVariable()
-                for child in node:
-                    type_b = self.check(errors, env, child)
-                    if len(self.unify(type_a, type_b)) != 0:
-                        return TypeError()
-                    type_a = type_b
-                return List(type_a)
+            type_a = TypeVariable()
+            for child in node:
+                type_b = self.check(errors, env, child)
+                if len(self.unify(type_a, type_b)) != 0:
+                    return TypeError()
+                type_a = type_b
+            return List(type_a)
         elif node.isApplication():
             fun_type = self.check(errors, env, VariableNode(node.token, [])).copy()
             arg_type = Tuple(list(map(lambda child: self.check(errors, env, child), node)))

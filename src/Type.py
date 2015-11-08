@@ -28,12 +28,6 @@ class Type:
             return "Int"
         elif self.isBoolean():
             return "Bool"
-        #elif self.isConcrete():
-        #    if len(self.types) == 0:
-        #        return "%s" % self.name
-        #    else:
-        #        subnodes = map(lambda x: x.str(mapping), self.types)
-        #        return "(%s)" % ', '.join(subnodes)
         elif self.isFunction():
             return self.types[0].str(mapping) + " -> " + self.types[1].str(mapping)
         else:
