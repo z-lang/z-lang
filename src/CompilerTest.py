@@ -10,7 +10,7 @@ class ComplerTest(TestCase):
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(code.strip(), "x = y")
+        self.assertEqual(code.strip(), "z_x = z_y")
 
 
     def testCompileFunction(self):
@@ -20,7 +20,7 @@ class ComplerTest(TestCase):
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(code.strip(), "f x = x")
+        self.assertEqual(code.strip(), "z_f (z_x) = z_x")
 
 
     def testCompileTuple(self):
@@ -30,7 +30,7 @@ class ComplerTest(TestCase):
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(code.strip(), "t = (a, \\x -> x, 9)")
+        self.assertEqual(code.strip(), "z_t = (z_a, \\(z_x) -> z_x, 9)")
 
 
     def testCompileList(self):
@@ -40,7 +40,7 @@ class ComplerTest(TestCase):
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(code.strip(), "t = [a, b, c]")
+        self.assertEqual(code.strip(), "z_t = [z_a, z_b, z_c]")
 
 
 
@@ -51,6 +51,6 @@ class ComplerTest(TestCase):
         self.assertEqual(errors, [])
 
         # assert correct parsing
-        self.assertEqual(code.strip(), "f x = \y -> x")
+        self.assertEqual(code.strip(), "z_f (z_x) = \\(z_y) -> z_x")
 
 

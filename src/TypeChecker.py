@@ -36,7 +36,8 @@ class TypeChecker:
             args = list(map(lambda x: TypeVariable(), node[0]))
             arg_type = Tuple(args)
             new_env = env.copy()
-            [new_env.add(n.value(), t, n) for n, t in zip(node[0], args)]
+            for n, t in zip(node[0], args):
+                new_env.add(n.value(), t, n)
             result_type = self.check(errors, new_env, node[1])
             return Function(arg_type, result_type)
         elif node.isLet():
@@ -54,7 +55,7 @@ class TypeChecker:
         if node.tokenId() in self.concreteTypes:
             return self.concreteTypes[node.tokenId()]
         elif env.get(node.value()) != None:
-            (type, node) = env.get(node.value())
+            (type, n) = env.get(node.value())
             return type
         else:
             errors += "error unknown: " + str(node) + " tokenid " + node.tokenId()

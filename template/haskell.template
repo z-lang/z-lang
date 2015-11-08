@@ -13,8 +13,13 @@
 ##- Recursive macro for each node value
 #  macro each_node(node)
 #     if node.isVariable()
-         ## A variable
-         {{- node.value() -}}
+#        if node.tokenId() == 'INT'
+            ## A global variable
+            {{- node.value() -}}
+#        else
+            ## A global variable
+            {{- "z_" + node.value() -}}
+#        endif
 #     elif node.isTuple()
          ## A tuple
          {{- "(" + foreach(node, each_node, ", ") + ")" -}}      
@@ -23,10 +28,10 @@
          {{- "[" + foreach(node, each_node, ", ") + "]" -}}      
 #     elif node.isApplication()
          ## A function call
-         {{- "(" ~ node + " " + foreach(node, each_node, " ") + ")" -}} 
+         {{- "(z_" ~ node + " " + foreach(node, each_node, " ") + ")" -}} 
 #     elif node.isLambda()
          ## A lambda function
-         {{- "\\\\" + node[0]|join(' ') + " -> " + each_node(node[1]) -}}
+         {{- "\\\\(z_" + node[0]|join(' z_') + ") -> " + each_node(node[1]) -}}
 #     endif
 # endmacro
 
@@ -35,23 +40,27 @@
 ## Define a haskell function for every definition in ast
 #  for definition in definitions
 #     if definition[1].isLambda()
-      {{- definition[0] ~ " " + definition[1][0]|join(' ') + " = " + each_node(definition[1][1]) + "\n\n" -}}
+      {{- "z_" ~ definition[0] ~ " (z_" + definition[1][0]|join(', z_') + ") = " + each_node(definition[1][1]) + "\n\n" -}}
 #     else
-      {{- definition[0] ~ " = " + each_node(definition[1]) + "\n\n" -}}
+      {{- "z_" ~ definition[0] ~ " = " + each_node(definition[1]) + "\n\n" -}}
 #     endif
 #  endfor
 
 ## Library functions
 # if library
-true = True
-false = False
+z_true = True
+z_false = False
+z_and a b = and [a, b]
+z_or  a b = or [a, b]
+z_not a = not a
 
-ifelse :: Bool -> a -> a -> a
-ifelse True a b = a
-ifelse False a b = b
+z_ifelse :: Bool -> a -> a -> a
+z_ifelse True a b = a
+z_ifelse False a b = b
 
-add = (+)
-sub = (-)
-mul = (*)
-div = (/)
+
+z_add = (+)
+z_sub = (-)
+z_mul = (*)
+z_div = (/)
 # endif
