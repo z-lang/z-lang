@@ -17,7 +17,7 @@ test: template
 template: ${TEMPLATES}
 
 src/%Template.py: template/%.template
-	@echo -n 'template = """' >> "$@"
+	@echo -n 'template = """' > "$@"
 	@cat "$^" >> "$@"
 	@echo '"""' >> "$@"
 
