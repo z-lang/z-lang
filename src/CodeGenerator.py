@@ -11,7 +11,7 @@ class CodeGenerator:
 
         # give ast as input an render template
         code = ""
-        for (name, (type, node)) in environment.elements.items():
+        for (name, (type, node, local)) in environment.elements.items():
             unique = UniqueLetter()
 
             if node == None:

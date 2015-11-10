@@ -233,4 +233,3 @@ class TypeCheckerTest(TestCase):
         # assert correct parsing
         self.assertEqual(str(value_type), "a")
 
-

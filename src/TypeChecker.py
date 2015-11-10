@@ -1,10 +1,13 @@
 from Environment import Environment
 from Node import VariableNode
-from Type import Type, TypeVariable, Function, Integer, Boolean, Tuple, List
+from Type import TypeVariable, Function, Integer, Boolean, Tuple, List
 
-class TypeError(Type):
-    def __init__(self):
-        super().__init__("error", [])
+class TypeError(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return self.msg
 
 class TypeChecker:
     concreteTypes = {
@@ -35,33 +38,35 @@ class TypeChecker:
             arg_type = Tuple(args)
             new_env = env.copy()
             for n, t in zip(node[0], args):
-                new_env.add(n.value(), t, n)
+                new_env.add(n.value(), t, n, True)
             result_type = self.check(errors, new_env, node[1])
             return Function(arg_type, result_type)
         elif node.isLet():
             new_type = TypeVariable()
-            env.add(node[0].value(), new_type, node[1])
+            env.add(node[0].value(), new_type, node[1], False)
             def_type = self.check(errors, env, node[1])
             self.unify(errors, new_type, def_type)
             return self.check(errors, env, node[1])
         else:
-            errors.append("type error: (" + str(node) + ")")
-            return TypeError()
+            raise "type error: (" + str(node) + ")"
 
 
     def getType(self, errors, env, node):
-        if node.tokenId() in self.concreteTypes:
+        if env.get(node.value()) != None:
+            (type, n, local) = env.get(node.value())
+            if local:
+                return type
+            else:
+                return type.copy()
+        elif node.tokenId() in self.concreteTypes:
             return self.concreteTypes[node.tokenId()]
-        elif env.get(node.value()) != None:
-            (type, n) = env.get(node.value())
-            return type
         else:
-            errors.append("error " + str(node.token.lineno) + ": unknown variable or function: '" + str(node) + "'")
-            return TypeError()
-
+            raise TypeError("error " + str(node.token.lineno) + ": unknown variable or function: '" + str(node) + "'"
+)
 
     def unify(self, errors, type_a, type_b):
         if type_b.isVariable():
+            type_b.seq = type_a.seq
             type_b.name = type_a.name
             type_b.types = type_a.types
             return type_a
@@ -69,11 +74,9 @@ class TypeChecker:
             return self.unify(errors, type_b, type_a)
         else:
             if (type_a.name != type_b.name or len(type_a.types) != len(type_b.types)):
-                errors.append("error:" + "type mismatch '" + str(type_a) + "' != '" + str(type_b) + "'")
-                return TypeError()
+                raise TypeError("error:" + "type mismatch '" + str(type_a) + "' != '" + str(type_b) + "'")
             else:
                 for subtype_a, subtype_b in zip(type_a.types, type_b.types):
                     self.unify(errors, subtype_a, subtype_b)
                 return type_a
-        errors.append("type mismatch error2")
-        return TypeError()
+        raise "type mismatch error2"

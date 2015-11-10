@@ -1,43 +1,62 @@
 from UniqueLetter import UniqueLetter
 
+seq = 0
+
 class Type:
     def __init__(self, name, types):
+        global seq
+        self.seq = seq
         self.name = name
         self.types = types
+        seq += 1
 
-    def str(self, unique):
-        if self.isVariable():
-            return unique[self]
-        elif self.isTuple():
-            subnodes = map(lambda x: x.str(unique), self.types)
-            return "(%s)" % ', '.join(subnodes)
-        elif self.isList():
-            subnodes = map(lambda x: x.str(unique), self.types)
-            return "[%s]" % ', '.join(subnodes)
-        elif self.isInteger():
-            return "Int"
-        elif self.isBoolean():
-            return "Bool"
-        elif self.isFunction():
-            return self.types[0].str(unique) + " -> " + self.types[1].str(unique)
-        else:
-            return "?"
+    def __str__(self):
+        unique = UniqueLetter()
 
-    def __str__(self, mapping={}):
-        return self.str(UniqueLetter())
+        def typestr(type):
+            if type.isVariable():
+                return unique[type]
+            elif type.isTuple():
+                subnodes = map(lambda x: typestr(x), type.types)
+                return "(%s)" % ', '.join(subnodes)
+            elif type.isList():
+                return "[%s]" % type.types[0]
+            elif type.isInteger():
+                return "Int"
+            elif type.isBoolean():
+                return "Bool"
+            elif type.isFunction():
+                return typestr(type.types[0]) + " -> " + typestr(type.types[1])
+            else:
+                return "?"
 
-    def copy(self, mapping={}):
-        copy = Type(self.name, [])
-        if self in mapping:
-            copy = mapping[self]
-        else:
-            mapping[self] = copy
-            if self.types != None:
-                if isinstance(self.types, Type):
-                    raise "error"
-                for type in self.types:
-                    copy.types.append(type.copy(mapping))
-        return copy
+        return typestr(self)
+
+    def copy(self):
+        mapping = {}
+
+        def typecopy(type):
+            if self.isInteger():
+                return self
+            elif self.isBoolean():
+                return self
+            if type in mapping:
+                copy = mapping[type]
+            else:
+                copy = Type(type.name, [])
+                mapping[type] = copy
+                for subtype in type.types:
+                    copy.types.append(typecopy(subtype))
+            return copy
+
+        return typecopy(self)
+
+    def __hash__(self):
+        #return hash((self.seq, str(self.name), self.types.__hash__()))
+        return self.seq.__hash__()
+
+    def __eq__(self, other):
+        return self.__hash__() == other.__hash__()
 
     def isVariable(self):
         return self.name == None

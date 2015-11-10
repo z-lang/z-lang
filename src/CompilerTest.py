@@ -11,7 +11,7 @@ class ComplerTest(TestCase):
 
         # assert correct parsing
         self.assertEqual(code.strip().splitlines(), [
-                        "z_x :: Integer", 
+                        "z_x :: Int", 
                         "z_x = 12"])
 
 
@@ -35,7 +35,7 @@ class ComplerTest(TestCase):
 
         # assert correct parsing
         self.assertEqual(code.strip().splitlines(), [
-                        "z_t :: (Bool, a -> a, Integer)", 
+                        "z_t :: (Bool, a -> a, Int)", 
                         "z_t = (z_true, \\(z_x) -> z_x, 9)"])
 
 
@@ -47,7 +47,7 @@ class ComplerTest(TestCase):
 
         # assert correct parsing
         self.assertEqual(code.strip().splitlines(), [
-                        "z_l :: [Integer]",
+                        "z_l :: [Int]",
                         "z_l = [1, 2, 3]"])
 
 

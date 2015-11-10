@@ -13,7 +13,7 @@
 #     if type.isVariable()
          {{- unique(type) -}}
 #     elif type.isInteger()
-         {{- "Integer" -}}
+         {{- "Int" -}}
 #     elif type.isBoolean()
          {{- "Bool" -}}
 #     elif type.isTuple()
@@ -63,7 +63,7 @@
 #- else
 ##- Library functions
 
-##- boolean operations
+-- boolean operations
 z_true = True
 z_false = False
 z_and(a, b) = and [a, b]
@@ -74,7 +74,7 @@ z_ifelse :: (Bool, a, a) -> a
 z_ifelse(True, a, b) = a
 z_ifelse(False, a, b) = b
 
-##- arithmetic operations
+-- arithmetic operations
 z_add(a, b) = a + b
 z_sub(a, b) = a - b
 z_mul(a, b) = a * b
@@ -85,4 +85,10 @@ z_le(a, b)  = a <= b
 z_ge(a, b)  = a >= b
 z_lt(a, b)  = a < b
 z_gt(a, b)  = a > b
+
+-- list functions
+z_len(l) = length(l)
+
+z_get :: ([a], Int) -> a
+z_get(l, i) = l!!i
 #- endif

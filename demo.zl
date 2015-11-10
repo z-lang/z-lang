@@ -5,46 +5,29 @@
 def pi = 3
 def bool = true
 
-// identitätsfunktions
-def identity(x) = x
+//def fet(a) = a
+//def test = fet
+//def test2 = fet(1)
+//def test3(x) = fet(x)
 
-// composition
-def composition(f, g) = lambda(x) f( g(x) )
+// list functions
+def list(x) = lambda(i) get(x, i)
+def test = get
+def test2 = get([1, 2], 0)
+def test3 = get([true, false], 0)
 
-// fibonacci
-def fib(x) = ifelse(
-               x < 2,
-               1, 
-               fib(x - 2) + fib(x - 1)
-            )
+// standard functions
+//def identity(x) = x
+//def composition(f, g) = lambda(x) f( g(x) )
 
-// faculty
-def fac(x) = ifelse(
-                  x == 1,
-                  1,
-                  x * fac(x - 1)
-                 )
+// math
+//def fib(x) = ifelse( x < 2, 1, fib(x - 2) + fib(x - 1) )
+//def fac(x) = ifelse( x == 1, 1, x * fac(x - 1) )
 
 // endless recursion
-def rec(x) = rec(x)
+//def rec(x) = rec(x)
 
 // test
-def f(x) = lambda(y) y
-//def a = f(1, 2)
-def b = f(1)(2)
-
-def sum(a, b) = a + b
-
-def list = [1, 2, 3]
-
-
-def boolean(a, b, c)  =  a and b or a or not b
-
-
-def g(x) = (lambda(a) a, lambda(b) b)
-
-def t = (1, 2)
-
-def q(a, b) = a + b
-
-def r = q(t)
+//def alist = list([1, 2, 3, 4])
+//def alen = len(alist)
+//def second = alist(2)

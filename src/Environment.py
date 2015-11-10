@@ -3,33 +3,44 @@ from Type import TypeVariable, Function, Tuple, List, Integer, Boolean
 class Environment:
     def __init__(self):
         self.elements = {
-            "true"      : (Boolean, None),
-            "false"     : (Boolean, None),
-            "and"       : (Function(Tuple([Boolean, Boolean]), Boolean), None),
-            "or"        : (Function(Tuple([Boolean, Boolean]), Boolean), None),
-            "not"       : (Function(Tuple([Boolean]), Boolean), None),
-            "add"       : (Function(Tuple([Integer, Integer]), Integer), None),
-            "sub"       : (Function(Tuple([Integer, Integer]), Integer), None),
-            "mul"       : (Function(Tuple([Integer, Integer]), Integer), None),
-            "div"       : (Function(Tuple([Integer, Integer]), Integer), None),
-            "eq"        : (Function(Tuple([Integer, Integer]), Boolean), None),
-            "ne"        : (Function(Tuple([Integer, Integer]), Boolean), None),
-            "le"        : (Function(Tuple([Integer, Integer]), Boolean), None),
-            "ge"        : (Function(Tuple([Integer, Integer]), Boolean), None),
-            "lt"        : (Function(Tuple([Integer, Integer]), Boolean), None),
-            "gt"        : (Function(Tuple([Integer, Integer]), Boolean), None),
+            # boolean functions
+            "true"      : (Boolean, None, False),
+            "false"     : (Boolean, None, False),
+            "and"       : (Function(Tuple([Boolean, Boolean]), Boolean), None, False),
+            "or"        : (Function(Tuple([Boolean, Boolean]), Boolean), None, False),
+            "not"       : (Function(Tuple([Boolean]), Boolean), None, False),
+
+            # integer functions
+            "add"       : (Function(Tuple([Integer, Integer]), Integer), None, False),
+            "sub"       : (Function(Tuple([Integer, Integer]), Integer), None, False),
+            "mul"       : (Function(Tuple([Integer, Integer]), Integer), None, False),
+            "div"       : (Function(Tuple([Integer, Integer]), Integer), None, False),
+
+            # comparision functions
+            "eq"        : (Function(Tuple([Integer, Integer]), Boolean), None, False),
+            "ne"        : (Function(Tuple([Integer, Integer]), Boolean), None, False),
+            "le"        : (Function(Tuple([Integer, Integer]), Boolean), None, False),
+            "ge"        : (Function(Tuple([Integer, Integer]), Boolean), None, False),
+            "lt"        : (Function(Tuple([Integer, Integer]), Boolean), None, False),
+            "gt"        : (Function(Tuple([Integer, Integer]), Boolean), None, False),
+
+            # list functions
+            "len"        : (Function(TypeVariable(), Integer), None, False),
         }
 
         ifelse_var = TypeVariable()
-        self.elements["ifelse"] = (Function(Tuple([Boolean, ifelse_var, ifelse_var,]), ifelse_var), None)
+        self.elements["ifelse"] = (Function(Tuple([Boolean, ifelse_var, ifelse_var]), ifelse_var), None, False)
+
+        get_var = TypeVariable()
+        self.elements["get"] = (Function(Tuple([List(get_var), Integer]), get_var), None, False)
 
     def get(self, name):
         if name in self.elements:
             return self.elements[name]
         return None
 
-    def add(self, name, type, node):
-        self.elements[name] = (type, node)
+    def add(self, name, type, node, local):
+        self.elements[name] = (type, node, local)
 
     def copy(self):
         copy = Environment()
