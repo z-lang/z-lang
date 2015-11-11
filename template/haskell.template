@@ -11,17 +11,17 @@
 ##- Type macro
 # macro typestr(type)
 #     if type.isVariable()
-         {{- unique(type) -}}
+         {{- unique(type.instance.seq) -}}
 #     elif type.isInteger()
          {{- "Int" -}}
 #     elif type.isBoolean()
          {{- "Bool" -}}
 #     elif type.isTuple()
-         {{- "(" + foreach(type.types, typestr, ", ") + ")" -}}
+         {{- "(" + foreach(type.getTypes(), typestr, ", ") + ")" -}}
 #     elif type.isList()
-         {{- "[" + foreach(type.types, typestr, "") + "]" -}}
+         {{- "[" + foreach(type.getTypes(), typestr, "") + "]" -}}
 #     elif type.isFunction()
-         {{- foreach(type.types, typestr, " -> ") -}}
+         {{- foreach(type.getTypes(), typestr, " -> ") -}}
 #     else
          {{- "?" -}}
 #     endif
@@ -91,4 +91,10 @@ z_len(l) = length(l)
 
 z_get :: ([a], Int) -> a
 z_get(l, i) = l!!i
+
+z_join :: ([a], [a]) -> [a]
+z_join(a, b) = a ++ b
+
+z_tail :: [a] -> [a]
+z_tail x = tail(x)
 #- endif

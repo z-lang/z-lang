@@ -140,9 +140,12 @@ class Grammer:
         p[0] = self.factory.createTuple(p[2])
 
     def p_list(self, p):
-        '''list : '[' argument ']' '''
- 
-        p[0] = self.factory.createList(p[2])
+        '''list : '[' argument ']'
+                | '[' ']' '''
+        if len(p) == 4:
+            p[0] = self.factory.createList(p[2])
+        else:
+            p[0] = self.factory.createList([])
 
     def p_string(self, p):
         '''string : STRING'''

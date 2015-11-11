@@ -25,7 +25,7 @@ class Environment:
             "gt"        : (Function(Tuple([Integer, Integer]), Boolean), None, False),
 
             # list functions
-            "len"        : (Function(TypeVariable(), Integer), None, False),
+            "len"        : (Function(List(TypeVariable()), Integer), None, False),
         }
 
         ifelse_var = TypeVariable()
@@ -33,6 +33,12 @@ class Environment:
 
         get_var = TypeVariable()
         self.elements["get"] = (Function(Tuple([List(get_var), Integer]), get_var), None, False)
+
+        join_var = TypeVariable()
+        self.elements["join"] = (Function(Tuple([List(join_var), List(join_var)]), List(join_var)), None, False)
+
+        tail_var = TypeVariable()
+        self.elements["tail"] = (Function(List(tail_var), List(join_var)), None, False)
 
     def get(self, name):
         if name in self.elements:

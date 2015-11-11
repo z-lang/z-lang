@@ -56,6 +56,18 @@ class ParserTest(TestCase):
             flatten(definitions[0]),
             "def(list (a b))")
 
+    def testParseEmptyList(self):
+        (definitions, errors) = Parser().parse("def list = []")
+
+        # assert that no error occured
+        self.assertEqual(errors, [])
+
+        # assert correct parsing
+        self.assertEqual(
+            flatten(definitions[0]),
+            "def(list)")
+
+
     def testParseLambda(self):
         (definitions, errors) = Parser().parse("def f(x) = lambda(y) x")
 

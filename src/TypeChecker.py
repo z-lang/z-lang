@@ -66,17 +66,19 @@ class TypeChecker:
 
     def unify(self, errors, type_a, type_b):
         if type_b.isVariable():
-            type_b.seq = type_a.seq
-            type_b.name = type_a.name
-            type_b.types = type_a.types
+            type_b.instance.seq = type_a.instance.seq
+            type_b.instance.name = type_a.instance.name
+            type_b.instance.types = type_a.instance.types
+            type_b.instance = type_a.instance
+            type_b = type_a
             return type_a
         elif type_a.isVariable():
             return self.unify(errors, type_b, type_a)
         else:
-            if (type_a.name != type_b.name or len(type_a.types) != len(type_b.types)):
+            if (type_a.getName() != type_b.getName() or len(type_a.getTypes()) != len(type_b.getTypes())):
                 raise TypeError("error:" + "type mismatch '" + str(type_a) + "' != '" + str(type_b) + "'")
             else:
-                for subtype_a, subtype_b in zip(type_a.types, type_b.types):
+                for subtype_a, subtype_b in zip(type_a.getTypes(), type_b.getTypes()):
                     self.unify(errors, subtype_a, subtype_b)
                 return type_a
         raise "type mismatch error2"
