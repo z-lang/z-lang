@@ -11,16 +11,13 @@
 //def composition(f, g) = lambda(x) f( g(x) )
 
 // list
-//def first(x) = get(x, 0)
-//def map(x, f) = ifelse(len(x) == 0, [ ],
-//                  ifelse(len(x) == 1, [first(x)],
-//                     //join([f(first(x))], map(tail(x),f))))
-//                     join( [first(x)], tail(x) )))
+def first(x) = get(x, 0)
+def map(x, f) = ifelse(len(x) == 0, [ ],
+                  ifelse(len(x) == 1, [f(first(x))],
+                     join([f(first(x))], map(tail(x),f))))
+                     //join( [first(x)], tail(x) )))
 
-
-//def map(x, f) = 
-//                  ifelse(len(x) == 1, [first(x)],
-//                     join( [first(x)], tail(x) ))
+def m = map([1, 2, 3], lambda(x) x * 2)
 
 //def test(x) = [first([x])]
 def test(x) = get([x], 0)

@@ -38,7 +38,7 @@ class Environment:
         self.elements["join"] = (Function(Tuple([List(join_var), List(join_var)]), List(join_var)), None, False)
 
         tail_var = TypeVariable()
-        self.elements["tail"] = (Function(List(tail_var), List(join_var)), None, False)
+        self.elements["tail"] = (Function(List(tail_var), List(tail_var)), None, False)
 
     def get(self, name):
         if name in self.elements:
