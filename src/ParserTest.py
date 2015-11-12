@@ -65,7 +65,7 @@ class ParserTest(TestCase):
         # assert correct parsing
         self.assertEqual(
             flatten(definitions[0]),
-            "def(list)")
+            "def(list )")
 
 
     def testParseLambda(self):

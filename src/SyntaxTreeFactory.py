@@ -44,9 +44,9 @@ class SyntaxTreeFactory:
     def createList(self, args):
         return ListNode(args)
 
-    def createCall(self, var_token, args):
+    def createCall(self, var_token, arg_node):
         e1 = self.createVariable(var_token)
-        return self.createApplication(e1, TupleNode(args))
+        return self.createApplication(e1, arg_node)
 
     def createApplication(self, e1, e2):
         return ApplicationNode(None, [e1, e2])

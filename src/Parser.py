@@ -52,7 +52,7 @@ class Grammer:
         '''logical_or : logical_or OR logical_and
                       | logical_and'''
         if len(p) == 4:
-            p[0] = self.factory.createCall(p[2], [ p[1], p[3] ])
+            p[0] = self.factory.createCall(p[2], self.createTuple([ p[1], p[3] ]))
         else:
             p[0] = p[1]
 
@@ -68,7 +68,7 @@ class Grammer:
         '''logical_not : NOT logical_not
                        | equality'''
         if len(p) == 3:
-            p[0] = self.factory.createCall(p[1], [ p[2] ])
+            p[0] = self.factory.createCall(p[1], self.factory.createTuple([ p[2] ]))
         else:
             p[0] = p[1]
 
@@ -77,7 +77,7 @@ class Grammer:
                     | equality NE cmp
                     | cmp'''
         if len(p) > 2:
-            p[0] = self.factory.createCall(p[2], [ p[1], p[3] ])
+            p[0] = self.factory.createCall(p[2], self.factory.createTuple([ p[1], p[3] ]))
         else:
             p[0] = p[1]
 
@@ -88,7 +88,7 @@ class Grammer:
                 | expr '>' expr
                 | expr'''
         if len(p) > 2:
-            p[0] = self.factory.createCall(p[2], [ p[1], p[3] ])
+            p[0] = self.factory.createCall(p[2], self.factory.createTuple([ p[1], p[3] ]))
         else:
             p[0] = p[1]
 
@@ -97,7 +97,7 @@ class Grammer:
                 | expr '-' term
                 | term'''
         if len(p) > 2:
-            p[0] = self.factory.createCall(p[2], [ p[1], p[3] ])
+            p[0] = self.factory.createCall(p[2], self.factory.createTuple([ p[1], p[3] ]))
         else:
             p[0] = p[1]
 
@@ -106,7 +106,7 @@ class Grammer:
                 | term '/' factor
                 | factor'''
         if len(p) > 2:
-            p[0] = self.factory.createCall(p[2], [ p[1], p[3] ])
+            p[0] = self.factory.createCall(p[2], self.factory.createTuple([ p[1], p[3] ]))
         else:
             p[0] = p[1]
 
