@@ -1,6 +1,7 @@
 from Environment import Environment
 from Node import VariableNode
 from Type import TypeVariable, Function, Integer, Boolean, Tuple, List
+from functools import reduce
 
 class TypeError(Exception):
     def __init__(self, msg):
@@ -21,12 +22,9 @@ class TypeChecker:
         elif node.isTuple():
             return Tuple(list(map(lambda n: self.check(errors, env, n), node)))
         elif node.isList():
-            type_a = TypeVariable()
-            for child in node:
-                type_b = self.check(errors, env, child)
-                self.unify(errors, type_a, type_b)
-                type_a = type_b
-            return List(type_a)
+            types = map(lambda x: self.check(errors, env, x), node)
+            unified = reduce(lambda a, b: self.unify(errors, a, b), types, TypeVariable())
+            return List(unified)
         elif node.isApplication():
             fun_type = self.check(errors, env, node[0])
             arg_type = self.check(errors, env, node[1])
@@ -46,7 +44,7 @@ class TypeChecker:
             env.add(node[0].value(), new_type, node[1], False)
             def_type = self.check(errors, env, node[1])
             self.unify(errors, new_type, def_type)
-            return self.check(errors, env, node[1])
+            return def_type
         else:
             raise "type error: (" + str(node) + ")"
 
