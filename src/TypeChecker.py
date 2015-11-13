@@ -1,6 +1,6 @@
 from Environment import Environment
 from Node import VariableNode
-from Type import TypeVariable, Function, Integer, Boolean, Tuple, List
+from Type import Type, TypeVariable, Function, Integer, Boolean, Tuple, List
 from functools import reduce
 
 class TypeError(Exception):
@@ -40,11 +40,18 @@ class TypeChecker:
             result_type = self.check(errors, new_env, node[1])
             return Function(arg_type, result_type)
         elif node.isLet():
+            #new_env = env.copy()
             new_type = TypeVariable()
             env.add(node[0].value(), new_type, node[1], False)
             def_type = self.check(errors, env, node[1])
-            self.unify(errors, new_type, def_type)
-            return def_type
+            result_type = self.unify(errors, new_type, def_type)
+            result_type = result_type.copy()
+            #result_type = self.normalize(result_type.copy())
+            #result_type = self.normalize(result_type.copy())
+            #env.add(node[0].value(), result_type.copy(), node[1], False)
+            #env.add(node[0].value(), result_type, node[1], False)
+            #env.elements[node[0].value()] = (result_type, node[1], False)
+            return result_type
         else:
             raise "type error: (" + str(node) + ")"
 
@@ -53,22 +60,22 @@ class TypeChecker:
         if env.get(node.value()) != None:
             (type, n, local) = env.get(node.value())
             if local:
-                return type
+                return type.prune()
             else:
-                return type.copy()
+                return type.copy().prune()
         elif node.tokenId() in self.concreteTypes:
             return self.concreteTypes[node.tokenId()]
         else:
-            raise TypeError("error " + str(node.token.lineno) + ": unknown variable or function: '" + str(node) + "'"
-)
+            raise TypeError("error " + str(node.token.lineno) + ": unknown variable or function: '" + str(node) + "'")
 
     def unify(self, errors, type_a, type_b):
-        if type_b.isVariable():
-            type_b.instance.seq = type_a.instance.seq
-            type_b.instance.name = type_a.instance.name
-            type_b.instance.types = type_a.instance.types
-            type_b.instance = type_a.instance
-            type_b = type_a
+        type_a = type_a.prune()
+        type_b = type_b.prune()
+
+        if type_a.seq == type_b.seq:
+            return type_a
+        elif type_b.isVariable():
+            type_b.set(type_a)
             return type_a
         elif type_a.isVariable():
             return self.unify(errors, type_b, type_a)

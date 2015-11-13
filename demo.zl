@@ -9,27 +9,28 @@ def composition(f, g) = lambda(x) f( g(x) )
 // list
 def first(x) = get(x, 0)
 
-def map(x, f) = ifelse(len(x) == 0, [],
-                  ifelse(len(x) == 1, [f(first(x))],
-                     join([f(first(x))], map(tail(x),f))))
-
-//def filter(x, f) = ifelse(len(x) == 0, [],
-//                     ifelse(f(first(x)), join([first(x)], filter(tail(x), f)),
-//                        filter(tail(x), f)))
-
 def caseCond(c, v) = c
 def caseVal(c, v) = v
+//def case(x) = ifelse( caseCond(first(x)), caseVal(first(x)), case(tail(x)) ) 
 
-def case(x) = ifelse(caseCond(x), caseVal(x), caseVal(x))
+def cases(c, d) = case( 
+                        len(c) == 0,
+                        d,
+                        case( caseCond(first(c)), caseVal(first(c)), cases(tail(c), d) )
+                  )
 
-def m = map([1, 2, 3], lambda(x) x * 2)
 
-//def test(x) = [first([x])]
-def test(x) = get([x], 0)
+def map(x, f) = cases([
+                  ( len(x) == 0,  [] )],
+                  join( [f(first(x))], map(tail(x),f) ))
 
-def test2 = get([1], 0)
+
+def filter(x, f) = cases([
+                     ( len(x) == 0,  [] ),
+                     ( f(first(x)),  join([first(x)], filter(tail(x), f)) )],
+                     filter(tail(x), f))
 
 // math
-def fib(x) = ifelse( x < 2, 1, fib(x - 2) + fib(x - 1) )
-def fac(x) = ifelse( x == 1, 1, x * fac(x - 1) )
+def fib(x) = case( x < 2, 1, fib(x - 2) + fib(x - 1) )
+def fac(x) = case( x == 1, 1, x * fac(x - 1) )
 

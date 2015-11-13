@@ -215,6 +215,24 @@ class TypeCheckerTest(TestCase):
         # assert correct parsing
         self.assertEqual(str(app_type), "Int")
 
+    def testFirstElementFunction(self):
+        (definitions, errors) = Parser().parse("""
+            def first(x) = get(x, 0)
+            def value = first([5, 6, 6])
+        """)
+        env = Environment()
+        first_type = TypeChecker().check(errors, env, definitions[0])
+        value_type = TypeChecker().check(errors, env, definitions[1])
+
+        # assert that no error occured
+        self.assertEqual(errors, [])
+
+        # assert correct parsing
+        self.assertEqual(str(first_type), "[a] -> a")
+
+        # assert correct parsing
+        self.assertEqual(str(value_type), "Int")
+
     def testRecursiveFunction(self):
         (definitions, errors) = Parser().parse("""
             def rec(x) = rec(x)

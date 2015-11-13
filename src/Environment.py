@@ -28,8 +28,8 @@ class Environment:
             "len"        : (Function(List(TypeVariable()), Integer), None, False),
         }
 
-        ifelse_var = TypeVariable()
-        self.elements["ifelse"] = (Function(Tuple([Boolean, ifelse_var, ifelse_var]), ifelse_var), None, False)
+        case_var = TypeVariable()
+        self.elements["case"] = (Function(Tuple([Boolean, case_var, case_var]), case_var), None, False)
 
         get_var = TypeVariable()
         self.elements["get"] = (Function(Tuple([List(get_var), Integer]), get_var), None, False)

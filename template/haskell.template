@@ -10,8 +10,9 @@
 
 ##- Type macro
 # macro typestr(type)
+#     set type = type.prune()
 #     if type.isVariable()
-         {{- unique(type.instance.seq) -}}
+         {{- unique(type.getSeq()) -}}
 #     elif type.isInteger()
          {{- "Int" -}}
 #     elif type.isBoolean()
@@ -70,9 +71,9 @@ z_and(a, b) = and [a, b]
 z_or(a, b) = or [a, b]
 z_not(a) = not a
 
-z_ifelse :: (Bool, a, a) -> a
-z_ifelse(True, a, b) = a
-z_ifelse(False, a, b) = b
+z_case :: (Bool, a, a) -> a
+z_case(True, a, b) = a
+z_case(False, a, b) = b
 
 -- arithmetic operations
 z_add(a, b) = a + b
