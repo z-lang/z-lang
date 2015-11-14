@@ -49,7 +49,7 @@
          {{- foreach(node, each_node, " ") -}} 
 #     elif node.isLambda()
          ## A lambda function
-         {{- "\\\\(z_" + node[0]|join(' z_') + ") -> " + each_node(node[1]) -}}
+         {{- "\\\\(z_" + node[0]|join(', z_') + ") -> " + each_node(node[1]) -}}
 #     endif
 # endmacro
 

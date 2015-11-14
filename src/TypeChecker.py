@@ -40,17 +40,11 @@ class TypeChecker:
             result_type = self.check(errors, new_env, node[1])
             return Function(arg_type, result_type)
         elif node.isLet():
-            #new_env = env.copy()
             new_type = TypeVariable()
-            env.add(node[0].value(), new_type, node[1], False)
+            env.add(node[0].value(), new_type, node[1], True)
             def_type = self.check(errors, env, node[1])
-            result_type = self.unify(errors, new_type, def_type)
-            result_type = result_type.copy()
-            #result_type = self.normalize(result_type.copy())
-            #result_type = self.normalize(result_type.copy())
-            #env.add(node[0].value(), result_type.copy(), node[1], False)
-            #env.add(node[0].value(), result_type, node[1], False)
-            #env.elements[node[0].value()] = (result_type, node[1], False)
+            result_type = self.unify(errors, new_type, def_type).copy()
+            env.add(node[0].value(), result_type, node[1], False)
             return result_type
         else:
             raise "type error: (" + str(node) + ")"

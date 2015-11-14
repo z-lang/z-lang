@@ -8,10 +8,10 @@ def composition(f, g) = lambda(x) f( g(x) )
 
 // list
 def first(x) = get(x, 0)
+def second(x) = get(x, 1)
 
 def caseCond(c, v) = c
 def caseVal(c, v) = v
-//def case(x) = ifelse( caseCond(first(x)), caseVal(first(x)), case(tail(x)) ) 
 
 def cases(c, d) = case( 
                         len(c) == 0,
@@ -19,16 +19,28 @@ def cases(c, d) = case(
                         case( caseCond(first(c)), caseVal(first(c)), cases(tail(c), d) )
                   )
 
-
-def map(x, f) = cases([
-                  ( len(x) == 0,  [] )],
-                  join( [f(first(x))], map(tail(x),f) ))
+def append(l, x) = join(l, [x])
+def prepend(x, l) = join([x], l)
 
 
-def filter(x, f) = cases([
-                     ( len(x) == 0,  [] ),
-                     ( f(first(x)),  join([first(x)], filter(tail(x), f)) )],
-                     filter(tail(x), f))
+def map(x, f) = case(
+                     len(x) > 0, 
+                     prepend( f(first(x)), map(tail(x),f) ),
+                     []
+               )
+
+def filter(x, f) = case(
+                     len(x) == 0,  
+                     [],
+                     case( f( first(x) ), prepend( first(x), filter(tail(x), f)), filter(tail(x), f)))
+
+def reduce(x, d, f) = case(
+                        len(x) == 0,
+                        d,
+                        case( f( first(x), reduce(tail(x), d, f) ), first(x), reduce(tail(x), d, f) ) 
+                     )
+
+def v = reduce([1,40,30, 42, 15,73,103,31,21], 0, lambda(x, y) x > y) 
 
 // math
 def fib(x) = case( x < 2, 1, fib(x - 2) + fib(x - 1) )
