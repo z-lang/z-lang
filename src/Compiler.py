@@ -5,8 +5,9 @@ from CodeGenerator import CodeGenerator
 from haskellTemplate import template
 
 class Compiler:
-    def compile(self, source, library=False):
-        env = Environment()
+    def compile(self, source, env=None, library=False):
+        if env == None:
+            env = Environment()
 
         # parse input
         (definitions, errors) = Parser().parse(source)
@@ -25,7 +26,9 @@ class Compiler:
 
         # code generation
         generator = CodeGenerator()
-        code = generator.generate(env, template)
+        for node  in definitions:
+            symbol = node[0].value()
+            code = generator.generateDefinition(env, symbol, template)
 
         # generate library
         if library:

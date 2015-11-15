@@ -22,9 +22,23 @@ class Node:
         return self.children.__iter__()
 
     def __str__(self):
-        if self.token:
-            return self.value()
-        return ""
+        def nodestr(node):
+
+            if node.isVariable():
+                return str(node.value())
+            elif node.isTuple():
+                return "(%s)" % ', '.join(map(lambda x: nodestr(x), node.children))
+            elif node.isList():
+                return "[%s]" % ', '.join(map(lambda x: nodestr(node.children)))
+            elif node.isApplication():
+                return nodestr(node.children[0]) + "(" + nodestr(node.children[1]) + ")"
+            elif node.isLambda():
+                return "lambda(%s) " % (", ".join(map(lambda x: nodestr(x), node[0]))) + nodestr(node[1])
+            elif node.isLet():
+                return "def " + nodestr(node[0]) + " = " + nodestr(node[1])
+            else:
+                return "?"
+        return nodestr(self)
 
     def value(self):
         if self.token:

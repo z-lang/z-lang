@@ -41,10 +41,10 @@ class TypeChecker:
             return Function(arg_type, result_type)
         elif node.isLet():
             new_type = TypeVariable()
-            env.add(node[0].value(), new_type, node[1], True)
+            env.add(node[0].value(), new_type, node, True)
             def_type = self.check(errors, env, node[1])
             result_type = self.unify(errors, new_type, def_type).copy()
-            env.add(node[0].value(), result_type, node[1], False)
+            env.add(node[0].value(), result_type, node, False)
             return result_type
         else:
             raise "type error: (" + str(node) + ")"

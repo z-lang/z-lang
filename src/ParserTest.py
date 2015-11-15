@@ -2,7 +2,10 @@ from unittest import TestCase
 from Parser import Parser
 
 def flatten(node):
-    string = str(node)
+    string = ""
+    if node.value() != None:    
+        string += node.value()
+
     if len(node) > 0:
         subnodes = map(lambda x: flatten(x), node)
         string += "(%s)" % ' '.join(subnodes)
