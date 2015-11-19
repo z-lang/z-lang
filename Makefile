@@ -1,15 +1,11 @@
 
 PYTHON = python3
-ZLANG = ${PYTHON} src/main.py
+ZLANG = ${PYTHON} main.py
 TEMPLATES = src/haskellTemplate.py
 
-.PHONY: all verbose test template clean
+.PHONY: all test template clean
 
 all: template
-	@${ZLANG} -c demo.zl
-
-verbose: template
-	@${ZLANG} -tsc demo.zl
 
 test: template
 	@${PYTHON} -m unittest discover -s src -v -p *Test.py

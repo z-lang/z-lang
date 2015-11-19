@@ -30,7 +30,7 @@ class GHCI:
         self.stdout.read()
         self.stderr.read()
 
-        self.stdin.write(bytes(code, "utf-8"))
+        self.stdin.write(bytes(code + "\n", "utf-8"))
         self.stdin.flush()
         self.stdout.flush()
         self.stderr.flush()
@@ -54,10 +54,12 @@ class Interpreter:
             ":list" : self.printList,
             ":show" : self.printDefinition,
             ":code" : self.printGeneratedCode,
+            ":string" : self.setString,
             ":help" : lambda x: None,
             "def"   : self.addDefinition,
         }
 
+        self.printString = False
         self.env = Environment()
         self.checker = TypeChecker()
         self.ghci = GHCI()
@@ -72,6 +74,9 @@ class Interpreter:
                 continue
             interpret += ":{\nlet\n" + definition.strip() + "\n:}\n"
         self.ghci.execute(interpret)
+
+        # imports
+        self.ghci.execute("import Data.Char")
 
     def interpret(self):
         self.printInfo()
@@ -159,7 +164,10 @@ class Interpreter:
             # code generation
             generator = CodeGenerator()
             code = generator.generateDefinition(self.env, symbol, template)
-            print(code.strip())
+            if code == None:
+                print("Native function")
+            else:
+                print(code.strip())
 
     def addDefinition(self, line):
         (code, errors) = Compiler().compile(line, self.env)
@@ -182,8 +190,49 @@ class Interpreter:
                 print(error)
             return
 
-        code = ":{\nlet\n" + code.strip() + "\n:}\nz_v\n" 
+        if self.printString and "v" in self.env.elements and str(self.env.get("v")[0]) == "[Int]": 
+            code = ":{\nlet\n" + code.strip() + "\n:}\nmap (\\x -> chr x) z_v\n" 
+        else:
+            code = ":{\nlet\n" + code.strip() + "\n:}\nz_v\n" 
         self.ghci.execute(code)
+        print()
+
+    def loadNative(self, path):
+        native = open(path, "r")
+        code = native.read()
+        native.close()
+
+        out = ""
+        for definition in code.strip().split("\n\n"):
+            out += ":{\nlet\n" + definition.strip() + "\n:}\n" 
+        self.ghci.execute(out)
+
+    def loadModule(self, path):
+        module = open(path, "r")
+        (code, errors) = Compiler().compile(module.read(), self.env)
+        module.close()
+
+        # check for errors
+        if len(errors) > 0:
+            for error in errors:
+                print(error)
+            return
+
+        out = ""
+        for definition in code.strip().split("\n\n"):
+            out += ":{\nlet\n" + definition.strip() + "\n:}\n" 
+        self.ghci.execute(out)
+
+    def setString(self, line):
+        tokens = line.strip().split(' ')
+       
+        if len(tokens) > 1:
+            if tokens[1] == "on":
+                self.printString = True
+            elif tokens[1] == "off":
+                self.printString = False
 
 
-Interpreter().interpret()
+       
+
+

@@ -21,7 +21,8 @@ class CodeGenerator:
                 "type" : type,
                 "value" : node[1],
                 "unique" : lambda key: unique[key],
-                "library" : False
+                "library" : False,
+                "ord" : lambda s: ', '.join(map(lambda c: str(ord(c)), s[1:-1]))
             })
         return code
 
@@ -48,7 +49,8 @@ class CodeGenerator:
             "type" : type,
             "value" : node[1],
             "unique" : lambda key: unique[key],
-            "library" : False
+            "library" : False,
+            "ord" : lambda s: ', '.join(map(lambda c: str(ord(c)), s[1:-1]))
         })
         return code
 

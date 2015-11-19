@@ -25,10 +25,11 @@ class Compiler:
             return ("", errors)
 
         # code generation
+        code = ""
         generator = CodeGenerator()
         for node  in definitions:
             symbol = node[0].value()
-            code = generator.generateDefinition(env, symbol, template)
+            code += generator.generateDefinition(env, symbol, template)
 
         # generate library
         if library:

@@ -12,8 +12,9 @@ class TypeError(Exception):
 
 class TypeChecker:
     concreteTypes = {
-        'INT'   : Integer,
-        'BOOL'  : Boolean
+        'INT'    : Integer,
+        'BOOL'   : Boolean,
+        'STRING' : List(Integer) 
     }
 
     def check(self, errors, env, node):

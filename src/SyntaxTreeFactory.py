@@ -64,5 +64,15 @@ class SyntaxTreeFactory:
         return VariableNode(var_token, [])
 
     def createString(self, var_token):
+        #string = []
+        #for char in list(var_token.value)[1:-1]:
+        #    token = Object()
+        #    token.type = 'INT'
+        #    token.value = ord(char)
+        #    string.append(VariableNode(token, []))
+        #return VariableNode(var_token, [])
+        #return ListNode(string)
         return VariableNode(var_token, [])
 
+#class Object(object):
+#    pass
