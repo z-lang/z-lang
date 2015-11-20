@@ -251,3 +251,12 @@ class TypeCheckerTest(TestCase):
         # assert correct parsing
         self.assertEqual(str(value_type), "a")
 
+    def testBooleanExpressionXor(self):
+        (definitions, errors) = Parser().parse(
+            "def xor(a, b) = (a and not b) or (not a and b)")
+        env = Environment()
+        type = TypeChecker().check(errors, env, definitions[0])
+
+        self.assertEqual(errors, [])
+        self.assertEqual(str(type), "(Bool, Bool) -> Bool")
+

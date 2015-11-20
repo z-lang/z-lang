@@ -52,7 +52,7 @@ class Grammer:
         '''logical_or : logical_or OR logical_and
                       | logical_and'''
         if len(p) == 4:
-            p[0] = self.factory.createCall(p[2], self.createTuple([ p[1], p[3] ]))
+            p[0] = self.factory.createCall(p[2], self.factory.createTuple([ p[1], p[3] ]))
         else:
             p[0] = p[1]
 
@@ -60,7 +60,7 @@ class Grammer:
         '''logical_and : logical_and AND logical_not
                        | logical_not'''
         if len(p) == 4:
-            p[0] = self.factory.createCall(p[2], [ p[1], p[3] ])
+            p[0] = self.factory.createCall(p[2], self.factory.createTuple([ p[1], p[3] ]))
         else:
             p[0] = p[1]
 
