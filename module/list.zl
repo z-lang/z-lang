@@ -33,5 +33,5 @@ def filter(x, f) = case(
 def reduce(x, d, f) = case(
                         len(x) == 0,
                         d,
-                        case( f( first(x), reduce(tail(x), d, f) ), first(x), reduce(tail(x), d, f) ) 
+                        f( first(x), reduce(tail(x), d, f) ) 
                      )

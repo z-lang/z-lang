@@ -1,0 +1,2 @@
+
+def xor(a, b) = (not a and b) or (a and not b)

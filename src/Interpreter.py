@@ -10,10 +10,11 @@ from subprocess import Popen, PIPE, STDOUT
 from select import select
 from os import devnull, O_NONBLOCK
 from fcntl import fcntl, F_SETFL
+from signal import SIGINT
 
 class GHCI:
     def __init__(self):
-        self.process = Popen(['ghci', '-v0'], stdout=PIPE, stdin=PIPE, stderr=PIPE)
+        self.process = Popen(['ghci', '-v0', '+RTS -M1k'], stdout=PIPE, stdin=PIPE, stderr=PIPE)
         self.stdin = self.process.stdin
         self.stdout = self.process.stdout
         self.stderr = self.process.stderr
@@ -22,7 +23,23 @@ class GHCI:
         fcntl(self.stdout.fileno(), F_SETFL, O_NONBLOCK)
         fcntl(self.stderr.fileno(), F_SETFL, O_NONBLOCK)
 
+    def __del__(self):
+        self.process.kill()
+
     def execute(self, code):
+        self.stdin.flush()
+        self.stdout.flush()
+        self.stderr.flush()
+
+        self.stdout.read()
+        self.stderr.read()
+
+        self.stdin.write(bytes(code + "\n", "utf-8"))
+        self.stdin.flush()
+        self.stdout.flush()
+        self.stderr.flush()
+
+    def evaluate(self, code):
         self.stdin.flush()
         self.stdout.flush()
         self.stderr.flush()
@@ -38,13 +55,21 @@ class GHCI:
         # read input
         out = ""
         fds = select([self.stdout, self.stderr], [], [], 1)[0]
-        while len(fds) > 0:
+        if len(fds) > 0:
             for fd in fds:
                 fd.flush()
                 line = fd.read().decode("utf-8")
                 out += line
-            fds = select([self.stdout, self.stderr], [], [], 1)[0]
-        print(out.strip(), end="", flush=True)
+            print(out.strip(), end="", flush=True)
+            return True
+        else:
+            self.process.send_signal(SIGINT)
+            return False
+
+    def close(self):
+        self.stdin.close()
+        self.stdout.close()
+        self.stderr.close()
 
 
 class Interpreter:
@@ -69,15 +94,18 @@ class Interpreter:
         self.ghci.execute("import Data.Char")
 
     def interpret(self):
-        self.printInfo()
-        self.printLineInput()
-
-        line = self.readLine()
-        while line:
-            self.execute(line)
+        try:
+            self.printInfo()
             self.printLineInput()
+
             line = self.readLine()
-        print()
+            while line:
+                self.execute(line)
+                self.printLineInput()
+                line = self.readLine()
+            print()
+        finally:
+            self.ghci.close()
 
     def printInfo(self):
         print("Commandline interpreter for zlang")
@@ -183,14 +211,16 @@ class Interpreter:
         if "v" in self.env.elements:
             (type, node, local) = self.env.get("v")
 
-            print(type, end=" ::\t")
 
             if self.printString and str(type) == "[Int]": 
                 code = ":{\nlet\n" + code.strip() + "\n:}\nmap (\\x -> chr x) z_v\n" 
             else:
                 code = ":{\nlet\n" + code.strip() + "\n:}\nz_v\n" 
-            self.ghci.execute(code)
-            print()
+
+            if self.ghci.evaluate(code):
+                print(" :: " + str(type))
+            else:
+                print("Abort. Evaluation took to long")
 
     def loadNative(self, path):
         native = open(path, "r")
