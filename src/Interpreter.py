@@ -65,16 +65,6 @@ class Interpreter:
         self.ghci = GHCI()
 
         
-        generator = CodeGenerator()
-        code = generator.generateLibrary(template)
-        interpret = ""
-
-        for definition in code.strip().splitlines():
-            if not definition.startswith('z_'):
-                continue
-            interpret += ":{\nlet\n" + definition.strip() + "\n:}\n"
-        self.ghci.execute(interpret)
-
         # imports
         self.ghci.execute("import Data.Char")
 
@@ -190,12 +180,17 @@ class Interpreter:
                 print(error)
             return
 
-        if self.printString and "v" in self.env.elements and str(self.env.get("v")[0]) == "[Int]": 
-            code = ":{\nlet\n" + code.strip() + "\n:}\nmap (\\x -> chr x) z_v\n" 
-        else:
-            code = ":{\nlet\n" + code.strip() + "\n:}\nz_v\n" 
-        self.ghci.execute(code)
-        print()
+        if "v" in self.env.elements:
+            (type, node, local) = self.env.get("v")
+
+            print(type, end=" ::\t")
+
+            if self.printString and str(type) == "[Int]": 
+                code = ":{\nlet\n" + code.strip() + "\n:}\nmap (\\x -> chr x) z_v\n" 
+            else:
+                code = ":{\nlet\n" + code.strip() + "\n:}\nz_v\n" 
+            self.ghci.execute(code)
+            print()
 
     def loadNative(self, path):
         native = open(path, "r")

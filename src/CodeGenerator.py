@@ -54,17 +54,3 @@ class CodeGenerator:
         })
         return code
 
-
-    def generateLibrary(self, templateString):
-        # create a template environement and define settings
-        env = jinja2.Environment(line_statement_prefix='#', line_comment_prefix='##')
-
-        # create template from templateString
-        template = env.from_string(templateString)
-
-        # give ast as input an render template
-        return template.render({ 
-            "definitions" : [],
-            "library" : True
-        })
-
