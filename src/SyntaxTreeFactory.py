@@ -1,8 +1,8 @@
-from Node import VariableNode, TupleNode, ListNode, ApplicationNode, LambdaNode, LetNode
+from Node import Node, VariableNode, IntegerNode, BooleanNode, StringNode, TupleNode, ListNode, ApplicationNode, LambdaNode, LetNode
 from ply.lex import LexToken
 
 def nodes(tokens):
-    return list( map( lambda x: VariableNode(x, []), tokens ) )
+    return list( map( lambda x: VariableNode(x), tokens ) )
 
 class SyntaxTreeFactory:
     functionMapping = {
@@ -22,19 +22,19 @@ class SyntaxTreeFactory:
        lamToken = LexToken()
        lamToken.value = 'lambda'
        return LetNode(def_token, [ 
-            VariableNode(var_token, []),
-            LambdaNode(lamToken, [ VariableNode(None, nodes(params)), val_node ]), 
+            VariableNode(var_token),
+            LambdaNode(lamToken, [ Node(None, None, nodes(params)), val_node ]), 
             ])
 
     def createVariableDefinition(self, def_token, var_token, val_node):
        return LetNode(def_token, [ 
-            VariableNode(var_token, []), 
+            VariableNode(var_token), 
             val_node 
             ])
 
     def createLambda(self, lambda_token, params, val):
         if len(params) > 0:
-            return LambdaNode(lambda_token, [ VariableNode(None, nodes(params)), val ])
+            return LambdaNode(lambda_token, [ Node(None, None, nodes(params)), val ])
         else:
             return VariableNode(lambda_token, [ val ])
 
@@ -55,24 +55,14 @@ class SyntaxTreeFactory:
         if var_token.value in self.functionMapping:
             var_token.value = self.functionMapping[var_token.value]
     
-        return VariableNode(var_token, [])
+        return VariableNode(var_token)
 
     def createInteger(self, var_token):
-        return VariableNode(var_token, [])
+        return IntegerNode(var_token)
 
     def createBoolean(self, var_token):
-        return VariableNode(var_token, [])
+        return BooleanNode(var_token)
 
     def createString(self, var_token):
-        #string = []
-        #for char in list(var_token.value)[1:-1]:
-        #    token = Object()
-        #    token.type = 'INT'
-        #    token.value = ord(char)
-        #    string.append(VariableNode(token, []))
-        #return VariableNode(var_token, [])
-        #return ListNode(string)
-        return VariableNode(var_token, [])
+        return StringNode(var_token)
 
-#class Object(object):
-#    pass

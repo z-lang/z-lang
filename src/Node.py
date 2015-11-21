@@ -1,10 +1,13 @@
 class Syntax:
     Variable    = 0
-    Tuple       = 1
-    List        = 2
-    Application = 3
-    Lambda      = 4
-    Let         = 5
+    Integer     = 1
+    Boolean     = 2
+    String      = 3
+    Tuple       = 4
+    List        = 5
+    Application = 6
+    Lambda      = 7
+    Let         = 8
 
 class Node:
     def __init__(self, syntax, token, children):
@@ -53,6 +56,15 @@ class Node:
     def isVariable(self):
         return self.syntax == Syntax.Variable
 
+    def isInteger(self):
+        return self.syntax == Syntax.Integer
+
+    def isBoolean(self):
+        return self.syntax == Syntax.Boolean
+
+    def isString(self):
+        return self.syntax == Syntax.Boolean
+
     def isTuple(self):
         return self.syntax == Syntax.Tuple
 
@@ -70,15 +82,23 @@ class Node:
 
 
 
-def VariableNode(token, children):
-    return Node(Syntax.Variable, token, children)
+def VariableNode(token):
+    return Node(Syntax.Variable, token, [])
+
+def IntegerNode(token):
+    return Node(Syntax.Integer, token, [])
+
+def BooleanNode(token):
+    return Node(Syntax.Boolean, token, [])
+
+def StringNode(token):
+    return Node(Syntax.String, token, [])
 
 def TupleNode(children):
     return Node(Syntax.Tuple, None, children)
 
 def ListNode(children):
     return Node(Syntax.List, None, children)
-
 
 def ApplicationNode(token, children):
     return Node(Syntax.Application, token, children)

@@ -11,15 +11,18 @@ class TypeError(Exception):
         return self.msg
 
 class TypeChecker:
-    concreteTypes = {
-        'INT'    : Integer,
-        'BOOL'   : Boolean,
-        'STRING' : List(Integer) 
-    }
-
     def check(self, errors, env, node):
         if node.isVariable():
-            return self.getType(errors, env, node)
+            type = env.getType(node.value())
+            if type == None:
+                raise TypeError("Undefined symbol '%s'" % node.value())
+            return type
+        if node.isInteger():
+            return Integer
+        if node.isBoolean():
+            return Boolean
+        if node.isString():
+            return List(Integer)
         elif node.isTuple():
             return Tuple(list(map(lambda n: self.check(errors, env, n), node)))
         elif node.isList():
@@ -41,27 +44,17 @@ class TypeChecker:
             result_type = self.check(errors, new_env, node[1])
             return Function(arg_type, result_type)
         elif node.isLet():
-            new_type = TypeVariable()
-            env.add(node[0].value(), new_type, node, True)
-            def_type = self.check(errors, env, node[1])
-            result_type = self.unify(errors, new_type, def_type).copy()
-            env.add(node[0].value(), result_type, node, False)
-            return result_type
+            try:
+                new_type = TypeVariable()
+                env.add(node[0].value(), new_type, node, True)
+                def_type = self.check(errors, env, node[1])
+                result_type = self.unify(errors, new_type, def_type).copy()
+                env.add(node[0].value(), result_type, node, False)
+                return result_type
+            except TypeError as e:
+                raise TypeError("In definition of '%s': %s" % (node[0].value(), e.msg))
         else:
-            raise "type error: (" + str(node) + ")"
-
-
-    def getType(self, errors, env, node):
-        if env.get(node.value()) != None:
-            (type, n, local) = env.get(node.value())
-            if local:
-                return type.prune()
-            else:
-                return type.copy().prune()
-        elif node.tokenId() in self.concreteTypes:
-            return self.concreteTypes[node.tokenId()]
-        else:
-            raise TypeError("error " + str(node.token.lineno) + ": unknown variable or function: '" + str(node) + "'")
+            raise TypeError("Unknown syntax construct '%s'" % str(node))
 
     def unify(self, errors, type_a, type_b):
         type_a = type_a.prune()
@@ -76,9 +69,8 @@ class TypeChecker:
             return self.unify(errors, type_b, type_a)
         else:
             if (type_a.getName() != type_b.getName() or len(type_a.getTypes()) != len(type_b.getTypes())):
-                raise TypeError("error:" + "type mismatch '" + str(type_a) + "' != '" + str(type_b) + "'")
+                raise TypeError("Type mismatch: cannot unify '%s' and '%s'" % (str(type_a), str(type_b)))
             else:
                 for subtype_a, subtype_b in zip(type_a.getTypes(), type_b.getTypes()):
                     self.unify(errors, subtype_a, subtype_b)
                 return type_a
-        raise "type mismatch error2"

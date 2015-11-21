@@ -30,15 +30,12 @@
 
 ##- Node macro
 #  macro each_node(node)
-#     if node.isVariable()
-#        if node.tokenId() == 'INT'
-            {{- node.value() -}}
-#        elif node.tokenId() == 'STRING'
-            {{- "[" + ord(node.value()) + "]" -}}
-#        else
-            ## A global variable
-            {{- "z_" + node.value() -}}
-#        endif
+#     if node.isVariable() or node.isBoolean()
+         {{- "z_" + node.value() -}}
+#     elif node.isInteger()
+         {{- node.value() -}}
+#     elif node.isString()
+         {{- "[" + ord(node.value()) + "]" -}}
 #     elif node.isTuple()
          ## A tuple
          {{- "(" + foreach(node, each_node, ", ") + ")" -}}      

@@ -1,6 +1,6 @@
 from sys import stdin
 from Environment import Environment
-from TypeChecker import TypeChecker
+from TypeChecker import TypeChecker, TypeError
 from Parser import Parser
 from CodeGenerator import CodeGenerator
 from haskellTemplate import template
@@ -100,7 +100,10 @@ class Interpreter:
 
             line = self.readLine()
             while line:
-                self.execute(line)
+                try:
+                    self.execute(line)
+                except TypeError as e:
+                    print(str(e))
                 self.printLineInput()
                 line = self.readLine()
             print()

@@ -52,3 +52,14 @@ class Environment:
         copy = Environment()
         copy.elements = self.elements.copy()
         return copy
+
+    def getType(self, name):
+        if name in self.elements:
+            (type, node, local) = self.elements.get(name)
+            if local:
+                return type.prune()
+            else:
+                return type.copy().prune()
+        else:
+            return None
+
