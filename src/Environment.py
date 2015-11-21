@@ -63,3 +63,5 @@ class Environment:
         else:
             return None
 
+    def __contains__(self, item):
+        return self.elements.__contains__(item)

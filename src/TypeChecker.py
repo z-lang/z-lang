@@ -13,28 +13,35 @@ class TypeError(Exception):
 class TypeChecker:
     def check(self, errors, env, node):
         if node.isVariable():
-            type = env.getType(node.value())
-            if type == None:
+            if node.value() in env:
+                return env.getType(node.value())
+            else:
                 raise TypeError("Undefined symbol '%s'" % node.value())
-            return type
-        if node.isInteger():
+
+        elif node.isInteger():
             return Integer
-        if node.isBoolean():
+
+        elif node.isBoolean():
             return Boolean
-        if node.isString():
+
+        elif node.isString():
             return List(Integer)
+
         elif node.isTuple():
             return Tuple(list(map(lambda n: self.check(errors, env, n), node)))
+
         elif node.isList():
             types = map(lambda x: self.check(errors, env, x), node)
             unified = reduce(lambda a, b: self.unify(errors, a, b), types, TypeVariable())
             return List(unified)
+
         elif node.isApplication():
             fun_type = self.check(errors, env, node[0])
             arg_type = self.check(errors, env, node[1])
             result_type = TypeVariable()
             self.unify(errors, Function(arg_type, result_type), fun_type)
             return result_type
+
         elif node.isLambda():
             args = list(map(lambda x: TypeVariable(), node[0]))
             arg_type = Tuple(args)
@@ -43,6 +50,7 @@ class TypeChecker:
                 new_env.add(n.value(), t, n, True)
             result_type = self.check(errors, new_env, node[1])
             return Function(arg_type, result_type)
+
         elif node.isLet():
             try:
                 new_type = TypeVariable()
