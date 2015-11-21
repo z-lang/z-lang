@@ -54,11 +54,11 @@ class GHCI:
 
         # read input
         out = ""
-        fds = select([self.stdout, self.stderr], [], [], 1)[0]
+        fds = select([self.stdout, self.stderr], [], [], 5)[0]
         if len(fds) > 0:
             for fd in fds:
                 fd.flush()
-                line = fd.read().decode("utf-8")
+                line = fd.readline().decode("utf-8")
                 out += line
             print(out.strip(), end="", flush=True)
             return True
@@ -119,6 +119,7 @@ class Interpreter:
         for line in stdin:
             if line[:-1].endswith("\\"):
                 input += line[:-2]
+                self.printLineInput()
             else:
                 input += line
                 return input
