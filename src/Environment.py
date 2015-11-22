@@ -1,4 +1,5 @@
 from Type import TypeVariable, Function, Tuple, List, Integer, Boolean
+from re import match
 
 class Environment:
     def __init__(self):
@@ -55,7 +56,13 @@ class Environment:
         return copy
 
     def getType(self, name):
-        if name in self.elements:
+        if self.isInteger(name):
+            return Integer
+        elif self.isBoolean(name):
+            return Boolean
+        elif self.isString(name):
+            return List(Integer)
+        elif name in self.elements:
             (type, node, local) = self.elements.get(name)
             if local:
                 return type.prune()
@@ -64,5 +71,18 @@ class Environment:
         else:
             return None
 
-    def __contains__(self, item):
-        return self.elements.__contains__(item)
+    def __contains__(self, name):
+        return self.isInteger(name) or \
+               self.isBoolean(name) or \
+               self.isString(name)  or \
+               self.elements.__contains__(name)
+
+    def isInteger(self, name):
+        return match('^-?[0-9]+$', name) != None
+
+    def isBoolean(self, name):
+        return match('^(true|false)$', name) != None
+
+    def isString(self, name):
+        return match('^"[^"]+"$', name) != None
+

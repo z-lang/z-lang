@@ -1,8 +1,5 @@
 class Syntax:
     Variable    = 0
-    Integer     = 1
-    Boolean     = 2
-    String      = 3
     Tuple       = 4
     List        = 5
     Application = 6
@@ -26,7 +23,6 @@ class Node:
 
     def __str__(self):
         def nodestr(node):
-
             if node.isVariable():
                 return str(node.value())
             elif node.isTuple():
@@ -56,15 +52,6 @@ class Node:
     def isVariable(self):
         return self.syntax == Syntax.Variable
 
-    def isInteger(self):
-        return self.syntax == Syntax.Integer
-
-    def isBoolean(self):
-        return self.syntax == Syntax.Boolean
-
-    def isString(self):
-        return self.syntax == Syntax.Boolean
-
     def isTuple(self):
         return self.syntax == Syntax.Tuple
 
@@ -84,15 +71,6 @@ class Node:
 
 def VariableNode(token):
     return Node(Syntax.Variable, token, [])
-
-def IntegerNode(token):
-    return Node(Syntax.Integer, token, [])
-
-def BooleanNode(token):
-    return Node(Syntax.Boolean, token, [])
-
-def StringNode(token):
-    return Node(Syntax.String, token, [])
 
 def TupleNode(children):
     return Node(Syntax.Tuple, None, children)

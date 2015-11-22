@@ -1,4 +1,4 @@
-from Node import Node, VariableNode, IntegerNode, BooleanNode, StringNode, TupleNode, ListNode, ApplicationNode, LambdaNode, LetNode
+from Node import Node, VariableNode, TupleNode, ListNode, ApplicationNode, LambdaNode, LetNode
 from ply.lex import LexToken
 
 def nodes(tokens):
@@ -58,11 +58,11 @@ class SyntaxTreeFactory:
         return VariableNode(var_token)
 
     def createInteger(self, var_token):
-        return IntegerNode(var_token)
+        return VariableNode(var_token)
 
     def createBoolean(self, var_token):
-        return BooleanNode(var_token)
+        return VariableNode(var_token)
 
     def createString(self, var_token):
-        return StringNode(var_token)
+        return VariableNode(var_token)
 

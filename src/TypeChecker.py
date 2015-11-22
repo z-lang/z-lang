@@ -18,15 +18,6 @@ class TypeChecker:
             else:
                 raise TypeError("Undefined symbol '%s'" % node.value())
 
-        elif node.isInteger():
-            return Integer
-
-        elif node.isBoolean():
-            return Boolean
-
-        elif node.isString():
-            return List(Integer)
-
         elif node.isTuple():
             return Tuple(list(map(lambda n: self.check(errors, env, n), node)))
 
