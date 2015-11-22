@@ -15,6 +15,7 @@ class Environment:
             "sub"       : (Function(Tuple([Integer, Integer]), Integer), None, False),
             "mul"       : (Function(Tuple([Integer, Integer]), Integer), None, False),
             "div"       : (Function(Tuple([Integer, Integer]), Integer), None, False),
+            "mod"       : (Function(Tuple([Integer, Integer]), Integer), None, False),
 
             # comparision functions
             "eq"        : (Function(Tuple([Integer, Integer]), Boolean), None, False),
