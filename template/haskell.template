@@ -36,7 +36,7 @@
 #        elif node.tokenId() == 'STRING'
             {{- "[" + ord(node.value()) + "]" -}}
 #        else
-            {{- "z_" + node.value() -}}
+            {{- node.value() -}}
 #        endif
 #     elif node.isTuple()
          ## A tuple
@@ -49,16 +49,14 @@
          {{- foreach(node, each_node, " ") -}} 
 #     elif node.isLambda()
          ## A lambda function
-         {{- "\\\\(z_" + node[0]|join(', z_') + ") -> " + each_node(node[1]) -}}
+         {{- "\\\\(" + node[0]|join(', ') + ") -> " + each_node(node[1]) -}}
 #     endif
 # endmacro
 
 ##- Define a haskell function for every definition in ast
-#- if library == False
-         {{- "z_" + name + " :: " + typestr(type) + "\n" -}}
-#-     if value.isLambda()
-         {{- "z_" ~ name ~ " (z_" + value[0]|join(', z_') + ") = " + each_node(value[1]) + "\n\n" -}}
-#-     else
-         {{- "z_" ~ name ~ " = " + each_node(value) + "\n\n" -}}
-#-     endif
-#- endif
+      {{- name + " :: " + typestr(type) + "\n" -}}
+#-    if value.isLambda()
+      {{- name ~ " (" + value[0]|join(', ') + ") = " + each_node(value[1]) + "\n\n" -}}
+#-    else
+      {{- name ~ " = " + each_node(value) + "\n\n" -}}
+#-    endif

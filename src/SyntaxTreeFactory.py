@@ -21,6 +21,7 @@ class SyntaxTreeFactory:
     def createFunctionDefinition(self, def_token, var_token, params, val_node):
        lamToken = LexToken()
        lamToken.value = 'lambda'
+       lamToken.type = 'LAMBDA'
        return LetNode(def_token, [ 
             VariableNode(var_token),
             LambdaNode(lamToken, [ Node(None, None, nodes(params)), val_node ]), 
